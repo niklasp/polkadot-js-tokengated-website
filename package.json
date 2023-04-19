@@ -9,14 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@polkadot/extension-dapp": "^0.45.5",
+    "@polkadot/react-identicon": "^3.1.4",
     "@types/node": "18.15.11",
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
     "next": "13.3.0",
+    "next-auth": "^4.22.1",
+    "primereact": "^9.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-particles": "^2.9.3",
+    "tsparticles": "^2.9.3",
+    "tsparticles-engine": "^2.9.3",
+    "tsparticles-preset-confetti": "^2.9.3",
     "typescript": "5.0.4"
   }
 }

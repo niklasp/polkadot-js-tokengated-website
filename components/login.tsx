@@ -11,6 +11,7 @@
   import { Inter } from "next/font/google";
 import Identicon from "@polkadot/react-identicon";
 import { accountOptionTemplate } from './account-select';
+import Link from "next/link";
   const inter = Inter({ subsets: ['latin'] })
 
   export default function LoginButton() {
@@ -89,7 +90,7 @@ import { accountOptionTemplate } from './account-select';
             </div>
             { session ?
               <>
-                <a
+                <Link
                   href="/protected"
                   className={styles.card}
                 >
@@ -99,17 +100,17 @@ import { accountOptionTemplate } from './account-select';
                   <p className={inter.className}>
                     View Tokengated Route
                   </p>
-                </a>
+                </Link>
                 <div
                   role="button"
                   onClick={() => signOut()}
                   className={styles.card}
                 >
                   <h2 className={inter.className}>
-                    Sign Out { session.user?.name } <span>-&gt;</span>
+                    Sign Out <span>-&gt;</span>
                   </h2>
                   <p className={inter.className}>
-                    Click here to sign out.
+                    Click here to sign out your account { session.user?.name }.
                   </p>
                 </div>
               </>

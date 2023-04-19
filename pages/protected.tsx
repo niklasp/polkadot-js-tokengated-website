@@ -33,7 +33,7 @@ export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.El
     <main className={ styles.protected }>
       <h1>🎉 Welcome { session.user?.name }, you passed the 🚪</h1>
       <p>with { ksmBalance }</p>
-      <p>You are seeing a /protected route. <a href="/" className={ styles.colorA }>&lt; go back</a></p>
+      <p>You are seeing a /protected route. <Link href="/" className={ styles.colorA }>&lt; go back</Link></p>
       <PolkadotParticles />
     </main>
   )

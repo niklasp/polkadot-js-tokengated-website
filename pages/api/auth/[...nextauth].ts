@@ -92,18 +92,12 @@ export const authOptions: NextAuthOptions = {
         } catch (e) {
           return null
         }
-        // if ( !credentials?.address) {
-        //   return null
-        // }
-        // return {
-        //   id: credentials.signature,
-        //   address: credentials.address,
-        // }
       },
     }),
   ],
   session: {
     strategy: 'jwt',
+    // maxAge: 3, // uncomment to test session expiration in seconds
   },
   jwt: {
     secret: "not very secret",

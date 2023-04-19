@@ -47,11 +47,16 @@ export const authOptions: NextAuthOptions = {
           type: "text",
           placeholder: "0x0",
         },
-        signature: {
-          label: "Username",
+        csrfToken: {
+          label: "CSRF Token",
+          type: "text",
+          placeholder: "0x0",
+        },
+        name: {
+          label: "Name",
           type: "text",
           placeholder: "name",
-        },
+        }
       },
       async authorize(credentials): Promise<any | null> {
         if (credentials === undefined) { return null }

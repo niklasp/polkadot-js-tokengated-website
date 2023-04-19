@@ -2,7 +2,9 @@ import { getServerSession } from "next-auth/next"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { authOptions } from "./api/auth/[...nextauth]"
-import { BN, formatBalance} from '@polkadot/util'
+import { BN, formatBalance, BN_ZERO } from '@polkadot/util';
+import { GetServerSideProps } from 'next'
+
 
 import styles from '@/styles/Home.module.css'
 
@@ -39,7 +41,11 @@ export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.El
   )
 }
 
-export async function getServerSideProps(context) {
+type Data = { 
+  freeBalance: BN,
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
   
   // Get the user's session based on the request
   // read more about get Server session here:
@@ -52,7 +58,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      freeBalance: session?.freeBalance ?? 0,
+      freeBalance: session?.freeBalance ?? BN_ZERO,
     }
   }
 }

@@ -9,9 +9,7 @@
 
   import styles from '@/styles/Home.module.css'
   import { Inter } from "next/font/google";
-import Identicon from "@polkadot/react-identicon";
-import { accountOptionTemplate } from './account-select';
-import Link from "next/link";
+  import Link from "next/link";
   const inter = Inter({ subsets: ['latin'] })
 
   export default function LoginButton() {

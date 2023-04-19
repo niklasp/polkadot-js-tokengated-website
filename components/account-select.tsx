@@ -5,7 +5,7 @@ import 'primereact/resources/primereact.min.css'
 import { Dropdown } from 'primereact/dropdown'
 import styles from '@/styles/Home.module.css'
 
-export const accountOptionTemplate = (option, props) => {
+export const accountValueTemplate = (option: any, props: any) => {
     if ( option ) {
     return (
         <div className={ styles.accountOption }>
@@ -24,7 +24,22 @@ export const accountOptionTemplate = (option, props) => {
     return <span>{props.placeholder}</span>;
 };
 
-export default function AccountSelector( { accounts, onSelectAccount, actingAccount } ) {
+export const accountOptionTemplate = (option: any) => {
+    return (
+        <div className={ styles.accountOption }>
+            <div>
+                <Identicon
+                    value={option?.address}
+                    size={32}
+                    theme='polkadot'
+                />
+                {option?.meta.name }
+            </div>
+        </div>
+    );
+};
+
+export default function AccountSelector( { accounts, onSelectAccount, actingAccount } : { accounts: any, onSelectAccount: any, actingAccount: any } ) {
 
     return (
         <Dropdown 
@@ -34,7 +49,7 @@ export default function AccountSelector( { accounts, onSelectAccount, actingAcco
             className={ styles.dropdown }
             value={ actingAccount }
             itemTemplate={ accountOptionTemplate }
-            valueTemplate={ accountOptionTemplate }
+            valueTemplate={ accountValueTemplate }
             onChange={(event) => {
                 console.log(event)
                 onSelectAccount(event.target.value.address)

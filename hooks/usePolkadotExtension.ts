@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import type { InjectedAccountWithMeta, InjectedExtension } from "@polkadot/extension-inject/types";
 
 export function usePolkadotExtension() {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-  const [actingAccount, setActingAccount] = useState({});
+  const [actingAccount, setActingAccount] = useState<InjectedAccountWithMeta>();
   const [extensionInstalled, setExtensionInstalled] = useState(false);
-  const [injector, setInjector] = useState(null)
+  const [injector, setInjector] = useState<InjectedExtension>()
 
   useEffect(() => {
     extensionSetup()
@@ -36,7 +36,7 @@ export function usePolkadotExtension() {
     
   };
 
-  const onSelectAccount = ( address ) => {
+  const onSelectAccount = ( address: any ) => {
     console.log( 'onselectaccount', address )
     setActingAccount( accounts?.find( a => a.address === address ) )
   }

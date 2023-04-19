@@ -33,25 +33,26 @@ import { accountOptionTemplate } from './account-select';
               nonce: await getCsrfToken(),
             }
 
-              const signRaw = injector?.signer?.signRaw;
+            const signRaw = injector?.signer?.signRaw;
 
-              if (!!signRaw && !!actingAccount) {
-                  // after making sure that signRaw is defined
-                  // we can use it to sign our message
-                  const data = await signRaw({
-                    address: actingAccount.address,
-                    data: JSON.stringify(message),
-                    type: "bytes"
-                  });
+            if (!!signRaw && !!actingAccount) {
+                // after making sure that signRaw is defined
+                // we can use it to sign our message
+                const data = await signRaw({
+                  address: actingAccount.address,
+                  data: JSON.stringify(message),
+                  type: "bytes"
+                });
 
-                  signature = data.signature
-              }
+                signature = data.signature
+            }
 
             // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
             const result = await signIn('credentials', {
               redirect: false,
               callbackUrl: '/protected',
               message: JSON.stringify(message),
+              name: actingAccount?.meta.name,
               signature,
               address: actingAccount?.address
             })
@@ -87,18 +88,31 @@ import { accountOptionTemplate } from './account-select';
               }
             </div>
             { session ?
-              <div
-                role="button"
-                onClick={() => signOut()}
-                className={styles.card}
-              >
-                <h2 className={inter.className}>
-                  Sign Out <span>-&gt;</span>
-                </h2>
-                <p className={inter.className}>
-                  Click here to sign out.
-                </p>
-              </div>
+              <>
+                <a
+                  href="/protected"
+                  className={styles.card}
+                >
+                  <h2 className={inter.className}>
+                    🎉 You passed the tokengate { session.user?.name }.  <span>-&gt;</span>
+                  </h2>
+                  <p className={inter.className}>
+                    View Tokengated Route
+                  </p>
+                </a>
+                <div
+                  role="button"
+                  onClick={() => signOut()}
+                  className={styles.card}
+                >
+                  <h2 className={inter.className}>
+                    Sign Out { session.user?.name } <span>-&gt;</span>
+                  </h2>
+                  <p className={inter.className}>
+                    Click here to sign out.
+                  </p>
+                </div>
+              </>
                 : 
                 <div
                   role="button"
@@ -120,7 +134,8 @@ import { accountOptionTemplate } from './account-select';
           </>
           : 
           <div>
-            <a href="https://polkadot.js.org/extension/">Please install a polkadot wallet browser extension to test this dApp</a>
+            Please <a className={ styles.colorA } href="https://polkadot.js.org/extension/">install a polkadot wallet browser extension</a> to test this dApp.
+            <p>If you have already installed it, allow this application to access it.</p>
           </div>
         }
       </>

@@ -15,7 +15,7 @@ export function usePolkadotExtension() {
     const { web3Accounts, web3Enable, web3FromAddress } = await import(
       "@polkadot/extension-dapp"
     );
-    const extensions = await web3Enable("Tokengated Polkadot")
+    const extensions = await web3Enable("Tokengated Polkadot Demo")
     console.log( 'extensions', extensions )
     if (extensions.length === 0) {
       return;
@@ -28,7 +28,6 @@ export function usePolkadotExtension() {
     // we can use web3FromSource which will return an InjectedExtension type
     // if ( actingAccount?.address) {
       // the address we use to use for signing, as injected
-      const SENDER = accounts[0].address;
     
       // finds an injector for an address
       const injector = await web3FromAddress(accounts[0].address);

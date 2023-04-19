@@ -47,25 +47,28 @@ export const authOptions: NextAuthOptions = {
           type: "text",
           placeholder: "0x0",
         },
+        signature: {
+          label: "Username",
+          type: "text",
+          placeholder: "name",
+        },
       },
       async authorize(credentials): Promise<any | null> {
-        // console.log( 'authorizing ', credentials )
         if (credentials === undefined) { return null }
         try {
-          //fix types for message
           const message = JSON.parse(credentials.message)
 
           //TODO verify the domain
 
           //verify the nonce
           if (message.nonce !== credentials.csrfToken ) {
-            return Promise.reject(new Error('invalid_csrf'))
+            return Promise.reject(new Error('🚫 You shall not pass!'))
           }
 
           // verify signature of the message
           const { isValid } = signatureVerify(credentials.message, credentials.signature, credentials.address);
           if ( ! isValid ) {
-            return Promise.reject(new Error('invalid_signature'))
+            return Promise.reject(new Error('🚫 Invalid Signature'))
           }
 
           // verify the account has the defined token
@@ -80,15 +83,16 @@ export const authOptions: NextAuthOptions = {
               // if the user has a free balance > 1 KSM, we let them in
               return {
                 id: credentials.address,
+                name: credentials.name,
                 freeBalance: accountInfo.data.free,
                 ksmAddress,
               }
             } else {
-              return Promise.reject(new Error('😩 The gate is closed for you'))
+              return Promise.reject(new Error('🚫 The gate is closed for you'))
             }
           }
 
-          return Promise.reject(new Error('api_error'))
+          return Promise.reject(new Error('🚫 API Error'))
         } catch (e) {
           return null
         }
@@ -111,6 +115,8 @@ export const authOptions: NextAuthOptions = {
     },
     async session(sessionData) {
       const { session, token } = sessionData
+
+      console.log( 'sessionData', sessionData)
 
       session.address = token.sub
       if ( session.address ) {

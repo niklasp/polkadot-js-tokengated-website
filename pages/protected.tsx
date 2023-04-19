@@ -7,6 +7,7 @@ import { BN, formatBalance} from '@polkadot/util'
 import styles from '@/styles/Home.module.css'
 
 import PolkadotParticles from "@/components/polkadot-particles"
+import Identicon from "@polkadot/react-identicon"
 
 export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.Element {
   const { data:session, status } = useSession({
@@ -23,15 +24,16 @@ export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.El
     return (
       <main className={ styles.protected }>
         <h1>You did not pass the 🚪</h1>
-        <p><Link href="/">&lt; go back</Link></p>
+        <p><Link href="/" className={ styles.colorA }>&lt; go back</Link></p>
       </main>
     )
   }
   
   return (
     <main className={ styles.protected }>
-      <h1>🎉 Welcome, you passed the 🚪</h1>
+      <h1>🎉 Welcome { session.user?.name }, you passed the 🚪</h1>
       <p>with { ksmBalance }</p>
+      <p>You are seeing a /protected route. <a href="/" className={ styles.colorA }>&lt; go back</a></p>
       <PolkadotParticles />
     </main>
   )

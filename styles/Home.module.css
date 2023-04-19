@@ -65,6 +65,7 @@
   outline: 0px solid rgba(var(--card-rgb), 0);
   transition: background 200ms, border 200ms;
   margin-left: 1rem;
+  width: 30ch;
 }
 
 .card span {
@@ -213,5 +214,9 @@
   height: 200px;
   padding: 1rem;
   background: #fff1;
-  /* display: none; */
+  display: none; /* hide by default */
+}
+
+.colorA {
+  color: var(--polkadot-color);
 }

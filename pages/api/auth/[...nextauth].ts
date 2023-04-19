@@ -76,19 +76,19 @@ export const authOptions: NextAuthOptions = {
             const ksmAddress = encodeAddress( credentials.address, 2 )
             const accountInfo = await api.query.system.account( ksmAddress )
 
-            if ( accountInfo.data.free.gt(new BN(0)) ) {
-              // if the user has a free balance > 0
+            if ( accountInfo.data.free.gt(new BN(1_000_000_000_000)) ) {
+              // if the user has a free balance > 1 KSM, we let them in
               return {
                 id: credentials.address,
                 freeBalance: accountInfo.data.free,
                 ksmAddress,
               }
             } else {
-              return Promise.reject(new Error('tokengate_closed'))
+              return Promise.reject(new Error('😩 The gate is closed for you'))
             }
           }
 
-          return null
+          return Promise.reject(new Error('api_error'))
         } catch (e) {
           return null
         }

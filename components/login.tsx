@@ -9,18 +9,16 @@
 
   import styles from '@/styles/Home.module.css'
   import { Inter } from "next/font/google";
+import Identicon from "@polkadot/react-identicon";
+import { accountOptionTemplate } from './account-select';
   const inter = Inter({ subsets: ['latin'] })
 
   export default function LoginButton() {
-      // const [{ data: connectData }, connect] = useConnect()
-      // const [{ data: accountData }] = useAccount()
       const router = useRouter()
       const [error, setError] = useState<string | undefined>(undefined)
       const [isLoading, setIsLoading] = useState( false )
 
       const { accounts, onSelectAccount, actingAccount, extensionInstalled, injector } = usePolkadotExtension()
-
-        console.log( accounts, actingAccount, extensionInstalled );
 
       const handleLogin = async () => {
           try {
@@ -71,73 +69,60 @@
             setIsLoading( false )
           }
         }
-      
-        const handleLogout = async () => {
-          signOut({ redirect: false })
-        }
-    
-      // const handleLogin = async () => {
-      //   try {
-      //     if (actingAccount?.address) {
-      //       signIn('credentials', { address: actingAccount.address })
-      //       return
-      //     }
-      //   } catch (error) {
-      //     window.alert(error)
-      //   }
-      // }
-
-      // const extensionSetup = async () => {
-      //     const { web3Accounts, web3Enable } = await import(
-      //       "@polkadot/extension-dapp"
-      //     );
-      //     const extensions = await web3Enable("Tokengated Polkadot");
-      //     if (extensions.length === 0) {
-      //       return;
-      //     }
-      //     setExtensionInstalled( true )
-      //     const account = await web3Accounts();
-      //     setAccounts(account);
-      //   };
 
     const { data: session, status } = useSession()
     
     return (
       <>
         { extensionInstalled ? 
-          <>
+        <>
+          <div className={ styles.cardWrap }>
+            <div className={ styles.dropDownWrap }>
+              { ! session &&
+                <AccountSelect
+                  actingAccount={ actingAccount }
+                  accounts={ accounts }
+                  onSelectAccount={ onSelectAccount }
+                /> 
+              }
+            </div>
             { session ?
-              <>
-                <p>Signed in as { session.address }</p>
-                <button onClick={() => signOut()}>Sign out</button>
-              </> :
-              <>
-                <div className={ styles.cardWrap }>
-                  <div className={ styles.dropDownWrap }>
-                    <AccountSelect accounts={ accounts } onSelectAccount={ onSelectAccount } />
-                  </div>
-                  <div
-                    role="button"
-                    onClick={() => handleLogin()}
-                    className={styles.card}
-                  >
-                    <h2 className={inter.className}>
-                      🔑 Let me in <span>-&gt;</span>
-                    </h2>
-                    <p className={inter.className}>
-                      Click here to sign in with your selected account and check if you can view the tokengated content.
-                    </p>
-                  </div>
-                </div>          
-                { isLoading ? <>Loading ...</> : <> { error } </> }
-              </>
-            }
-          </> :
+              <div
+                role="button"
+                onClick={() => signOut()}
+                className={styles.card}
+              >
+                <h2 className={inter.className}>
+                  Sign Out <span>-&gt;</span>
+                </h2>
+                <p className={inter.className}>
+                  Click here to sign out.
+                </p>
+              </div>
+                : 
+                <div
+                  role="button"
+                  onClick={() => handleLogin()}
+                  className={styles.card}
+                >
+                  <h2 className={inter.className}>
+                    🔑 Let me in <span>-&gt;</span>
+                  </h2>
+                  <p className={inter.className}>
+                    Click here to sign in with your selected account and check if 
+                    you can view the tokengated content. <br></br>
+                    You need &gt; 1 KSM free balance.
+                  </p>
+                </div>
+              }
+            </div>
+            { isLoading ? <>Signing In ...</> : <> { error } </> }
+          </>
+          : 
           <div>
             <a href="https://polkadot.js.org/extension/">Please install a polkadot wallet browser extension to test this dApp</a>
           </div>
         }
-        
       </>
     )
   }

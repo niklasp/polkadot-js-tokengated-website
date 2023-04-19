@@ -3,48 +3,9 @@ import Image from 'next/image'
 import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 
-import LoginButton from '@/components/login-btn'
+import LoginButton from '@/components/login'
 import { useSession } from 'next-auth/react'
 import { usePolkadotExtension } from '@/hooks/usePolkadotExtension'
-
-const friendOptions = [
-  {
-    key: 'Jenny Hess',
-    name: 'Jenny Hess',
-    value: 'Jenny Hess',
-    image: { avatar: true, src: 'https://react.semantic-ui.com/images/avatar/small/jenny.jpg' },
-  },
-  {
-    key: 'Elliot Fu',
-    name: 'Elliot Fu',
-    value: 'Elliot Fu',
-    image: { avatar: true, src: 'https://react.semantic-ui.com/images/avatar/small/elliot.jpg' },
-  },
-  {
-    key: 'Stevie Feliciano',
-    name: 'Stevie Feliciano',
-    value: 'Stevie Feliciano',
-    image: { avatar: true, src: 'https://react.semantic-ui.com/images/avatar/small/stevie.jpg' },
-  },
-  {
-    key: 'Christian',
-    name: 'Christian',
-    value: 'Christian',
-    image: { avatar: true, src: 'https://react.semantic-ui.com/images/avatar/small/christian.jpg' },
-  },
-  {
-    key: 'Matt',
-    name: 'Matt',
-    value: 'Matt',
-    image: { avatar: true, src: 'https://react.semantic-ui.com/images/avatar/small/matt.jpg' },
-  },
-  {
-    key: 'Justen Kitsune',
-    name: 'Justen Kitsune',
-    value: 'Justen Kitsune',
-    image: { avatar: true, src: 'https://react.semantic-ui.com/images/avatar/small/justen.jpg' },
-  },
-]
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -61,25 +22,6 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.description}>
-          <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                src="/github.svg"
-                alt="Github Repository"
-                className={styles.githubLogo}
-                width={24}
-                height={24}
-                priority
-              />
-            </a>
-          </div>
-        </div>
-
         <div className={styles.center}>
           <Image
             className={styles.logo}
@@ -93,13 +35,42 @@ export default function Home() {
         </div>
         <LoginButton />
 
-        { session && 
+        <div className={styles.description}>
+            <a
+              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                src="/github.svg"
+                alt="Github Repository"
+                className={styles.githubLogo}
+                width={16}
+                height={16}
+                priority
+              />
+              View the repo
+            </a>
+            <a
+              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              📖 View the tutorial
+            </a>
+            <a
+              href="/protected"
+              rel="noopener noreferrer"
+            >
+              🔐 Go to /protected
+            </a>
+          </div>
+
           <pre className={ styles.sessionDebug }>
-            Signed in as {JSON.stringify(session, null, 2)}<br />
-            actingAccount:{ JSON.stringify( actingAccount, null, 2 ) }<br />
+            session: {JSON.stringify(session, null, 2)}<br />
+            actingAccount: { JSON.stringify( actingAccount, null, 2 ) }<br />
             injector: {JSON.stringify(injector, null, 2)}
           </pre>
-        }
       </main>
     </>
   )

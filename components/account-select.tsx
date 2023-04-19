@@ -5,30 +5,26 @@ import 'primereact/resources/primereact.min.css'
 import { Dropdown } from 'primereact/dropdown'
 import styles from '@/styles/Home.module.css'
 
-
-export default function AccountSelector( { accounts, onSelectAccount } ) {
-
-    //state for selected account
-    const [selectedAccount, setSelectedAccount] = useState(null);
-
-    const accountOptionTemplate = (option, props) => {
-        if ( option ) {
-        return (
-            <div className={ styles.accountOption }>
-                <div>
-                    <Identicon
-                        value={option?.address}
-                        size={32}
-                        theme='polkadot'
-                    />
-                    {option?.meta.name }
-                </div>
+export const accountOptionTemplate = (option, props) => {
+    if ( option ) {
+    return (
+        <div className={ styles.accountOption }>
+            <div>
+                <Identicon
+                    value={option?.address}
+                    size={32}
+                    theme='polkadot'
+                />
+                {option?.meta.name }
             </div>
-        );
-        }
+        </div>
+    );
+    }
 
-        return <span>{props.placeholder}</span>;
-    };
+    return <span>{props.placeholder}</span>;
+};
+
+export default function AccountSelector( { accounts, onSelectAccount, actingAccount } ) {
 
     return (
         <Dropdown 
@@ -36,12 +32,11 @@ export default function AccountSelector( { accounts, onSelectAccount } ) {
             optionLabel="address" 
             placeholder="Select Account"
             className={ styles.dropdown }
-            value={ selectedAccount }
+            value={ actingAccount }
             itemTemplate={ accountOptionTemplate }
             valueTemplate={ accountOptionTemplate }
             onChange={(event) => {
                 console.log(event)
-                setSelectedAccount(event.target.value)
                 onSelectAccount(event.target.value.address)
             }}
         />

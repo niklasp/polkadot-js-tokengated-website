@@ -30,7 +30,7 @@ export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.El
   
   return (
     <main className={ styles.protected }>
-      <h1>Welcome, you passed the 🚪</h1>
+      <h1>🎉 Welcome, you passed the 🚪</h1>
       <p>with { ksmBalance }</p>
       <PolkadotParticles />
     </main>

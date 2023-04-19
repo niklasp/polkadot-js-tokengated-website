@@ -11,6 +11,7 @@
 
   --polkadot-color: #e6007a;
   --polkadot-rgb: 230, 0, 122;
+  --polkadot-purple: #8e24aa;
 
   --primary-glow: radial-gradient(#e6007aaa, rgba(1, 65, 255, 0));
   --secondary-glow: linear-gradient(
@@ -63,10 +64,12 @@ body {
 
 a {
   color: inherit;
-  text-decoration: none;
-  color: #E6007A;
+  text-decoration: underline;
+  color: #999;
+  opacity: 0.8;
 }
 
 a:hover {
   text-decoration: underline;
+  opacity: 1;
 }

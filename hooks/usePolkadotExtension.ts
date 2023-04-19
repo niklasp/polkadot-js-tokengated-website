@@ -38,9 +38,10 @@ export function usePolkadotExtension() {
   };
 
   const onSelectAccount = ( address ) => {
+    console.log( 'onselectaccount', address )
     setActingAccount( accounts?.find( a => a.address === address ) )
   }
 
-  return { accounts, actingAccount, extensionInstalled, onSelectAccount, injector }
+  return { accounts, actingAccount, setActingAccount, extensionInstalled, onSelectAccount, injector }
   
 }

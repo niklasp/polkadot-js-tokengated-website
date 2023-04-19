@@ -3,12 +3,13 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 6rem;
+  padding: 6rem 6rem 2rem 6rem;
   min-height: 100vh;
+  position: relative;
 }
 
 .description {
-  display: inherit;
+  display: flex;
   justify-content: inherit;
   align-items: inherit;
   font-size: 0.85rem;
@@ -202,4 +203,15 @@
 
 .protected p {
   margin-top: 2rem;
+}
+
+.sessionDebug {
+  position: absolute;
+  right: 0;
+  top: 0;
+  overflow: scroll;
+  height: 200px;
+  padding: 1rem;
+  background: #fff1;
+  /* display: none; */
 }

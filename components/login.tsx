@@ -11,6 +11,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import { PolkadotExtensionContext } from "@/context/polkadotExtensionContext";
 import { usePolkadotExtension } from "@/hooks/usePolkadotExtension";
+import { isWeb3Injected } from '@polkadot/extension-dapp';
 const inter = Inter({ subsets: ['latin'] })
 
 export default function LoginButton() {
@@ -18,9 +19,8 @@ export default function LoginButton() {
     const [error, setError] = useState<string | undefined>(undefined)
     const [isLoading, setIsLoading] = useState( false )
 
-    const { onSelectAccount, actingAccount, extensionInstalled, injector } = usePolkadotExtension()
-
-    const { accounts } = useContext(PolkadotExtensionContext)
+    const { accounts, isWeb3Injected, injector, actingAccountIdx } = useContext(PolkadotExtensionContext)
+    const actingAccount = accounts[actingAccountIdx]
 
     const handleLogin = async () => {
         try {
@@ -68,7 +68,7 @@ export default function LoginButton() {
           }
 
         } catch (error) {
-          setError( 'error_auth' )
+          setError( 'Cancelled Signature' )
           setIsLoading( false )
         }
       }
@@ -77,16 +77,13 @@ export default function LoginButton() {
   
   return (
     <>
-      { extensionInstalled ? 
+      isWeb3Injected: { isWeb3Injected ? 'true' : 'false' }
+      { isWeb3Injected ? 
       <>
         <div className={ styles.cardWrap }>
           <div className={ styles.dropDownWrap }>
             { ! session &&
-              <AccountSelect
-                actingAccount={ actingAccount }
-                accounts={ accounts }
-                onSelectAccount={ onSelectAccount }
-              /> 
+              <AccountSelect/> 
             }
           </div>
           { session ?
@@ -96,10 +93,10 @@ export default function LoginButton() {
                 className={styles.card}
               >
                 <h2 className={inter.className}>
-                  🎉 You passed the tokengate { session.user?.name }.  <span>-&gt;</span>
+                  🎉 View Tokengated Route <span>-&gt;</span>
                 </h2>
                 <p className={inter.className}>
-                  View Tokengated Route
+                  You passed the tokengate { session.user?.name }. You can now view the protected route.
                 </p>
               </Link>
               <div
@@ -132,7 +129,7 @@ export default function LoginButton() {
               </div>
             }
           </div>
-          { isLoading ? <>Signing In ...</> : <> { error } </> }
+          { isLoading ? <>Signing In ...</> : <span className={ styles.error }> { error } </span> }
         </>
         : 
         <div>

@@ -1,12 +1,15 @@
 import { createContext, useEffect, useState } from "react";
 import type { InjectedAccountWithMeta, InjectedExtension, InjectedWindow } from "@polkadot/extension-inject/types";
-import { useRouter } from 'next/router'
+import { isEqual } from 'lodash';
+import { isDeepStrictEqual } from "util";
 
 type PolkadotExtensionContextType = {
     accounts: any[];
-    actingAccountId: number;
+    actingAccountIdx: number;
+    setActingAccountIdx: (idx: number) => void;
+    setActingAccountByAddress: (address: string) => void;
     injector: InjectedExtension | undefined;
-    awaitingExtensionPermission: boolean;
+    isWeb3Injected: boolean;
 }
 
 export const PolkadotExtensionContext = 
@@ -14,62 +17,62 @@ export const PolkadotExtensionContext =
 
 export const PolkadotExtensionProvider = ( props ) => {
     const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
-    const [actingAccountId, setActingAccountId] = useState<number>(0);
-    const [awaitingExtensionPermission, setAwaitingExtensionPermission] = useState<boolean>(true);
+    const [actingAccountIdx, setActingAccountIdx] = useState<number>(0);
+    const [isWeb3Injected, setIsWeb3Injected] = useState<boolean>(false);
     const [injector, setInjector] = useState<InjectedExtension>();
-    const [allowExtensionConnection, setAllowExtensionConnection] = useState<boolean>(true);
+    const [sources, setSources] = useState<any[]>([]);
 
-    const router = useRouter()
+    const setActingAccountByAddress = (address: string) => {
+      setActingAccountIdx( accounts.findIndex( account => account.address === address ) )
+    }
 
-    const Accounts = async () => {
-
-      console.log( 'entering accounts async', awaitingExtensionPermission,  )
-      
-      const { web3Accounts, web3Enable, web3FromAddress, web3AccountsSubscribe } = await import(
+    const Accounts = async () => {      
+      const { web3Accounts, web3Enable, web3FromAddress, web3AccountsSubscribe, web3EnablePromise, isWeb3Injected, } = await import(
         "@polkadot/extension-dapp"
       );
+
+      setIsWeb3Injected( isWeb3Injected )
       // returns an array of all the injected sources
       // (this needs to be called first, before other requests)
       
-      const allInjected = await web3Enable('Tokengated Polkadot Demo');
-      const allAccounts = await web3Accounts();
+      
+      const allInjected = await web3Enable('Tokengated Polkadot Demo')
+      const sources = await web3EnablePromise
 
-      if ( allInjected.length > 0 && allAccounts.length === 0 ) {
-        router.reload()
-      } else {
+      console.log( 'sources', sources )
 
+      if ( allInjected.length === 0 ) {
+        console.info('No extension found')
+        return
       }
 
-      console.log( 'allInjected', allInjected )
+      const allAccounts = await web3Accounts()
 
-      // WARNING: this will reload the page if the extension is not installed and is a hack to get around the fact that
-      // the promise does not resolve properly with dynamic imports
-      if (allInjected && allInjected.length > 0 ) {
-        setAwaitingExtensionPermission( false )
-
-        // returns an array of { address, meta: { name, source } }
-        // meta.source contains the name of the extension that provides this account
-        const allAccounts = await web3Accounts();
+      if ( ! isEqual ( accounts, allAccounts ) ) {
         setAccounts( allAccounts )
-    
-        if ( allAccounts.length > 0 ) {
-          // the address we use to use for signing, as injected
-        
-          // finds an injector for an address
-          const injector = await web3FromAddress(allAccounts[0].address);
-          setInjector( injector )
-        } else {
-          router.reload()
-        }
+      }
+
+      // we can use web3FromSource which will return an InjectedExtension type
+      if ( allAccounts.length > 0 ) {      
+        // finds an injector for an address
+        const injector = await web3FromAddress(allAccounts[0].address);
+        setInjector( injector )
       }
     }
   
     useEffect(() => {
       Accounts()
-    }, [ ])
+    }, [ sources ])
 
     return (
-        <PolkadotExtensionContext.Provider value={ { accounts, actingAccountId, injector } }>
+        <PolkadotExtensionContext.Provider value={ { 
+          accounts,
+          actingAccountIdx,
+          setActingAccountIdx,
+          setActingAccountByAddress,
+          injector,
+          isWeb3Injected,
+        } }>
             {props.children}
         </PolkadotExtensionContext.Provider>
     )

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Identicon from '@polkadot/react-identicon';
 import 'primereact/resources/themes/md-dark-indigo/theme.css'
 import 'primereact/resources/primereact.min.css'    
 import { Dropdown } from 'primereact/dropdown'
 import styles from '@/styles/Home.module.css'
+import { PolkadotExtensionContext } from '@/context/polkadotExtensionContext';
 
 export const accountValueTemplate = (option: any, props: any) => {
     if ( option ) {
@@ -39,7 +40,9 @@ export const accountOptionTemplate = (option: any) => {
     );
 };
 
-export default function AccountSelector( { accounts, onSelectAccount, actingAccount } : { accounts: any, onSelectAccount: any, actingAccount: any } ) {
+export default function AccountSelector( ) {
+    const { accounts, actingAccountIdx, setActingAccountIdx, setActingAccountByAddress } = useContext(PolkadotExtensionContext)
+    const actingAccount = accounts[actingAccountIdx]
 
     return (
         <Dropdown 
@@ -51,8 +54,7 @@ export default function AccountSelector( { accounts, onSelectAccount, actingAcco
             itemTemplate={ accountOptionTemplate }
             valueTemplate={ accountValueTemplate }
             onChange={(event) => {
-                console.log(event)
-                onSelectAccount(event.target.value.address)
+                setActingAccountByAddress(event.target.value.address)
             }}
         />
     )

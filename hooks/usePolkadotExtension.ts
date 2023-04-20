@@ -7,10 +7,6 @@ export function usePolkadotExtension() {
   const [extensionInstalled, setExtensionInstalled] = useState(false);
   const [injector, setInjector] = useState<InjectedExtension>()
 
-  useEffect(() => {
-    extensionSetup()
-  }, [ extensionInstalled ])
-
   const extensionSetup = async () => {
     const { web3Accounts, web3Enable, web3FromAddress } = await import(
       "@polkadot/extension-dapp"

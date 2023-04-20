@@ -1,6 +1,8 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SessionProvider } from "next-auth/react"
+import { PolkadotExtensionProvider } from '@/context/polkadotExtensionContext'
+import { usePolkadotExtension } from '@/hooks/usePolkadotExtension'
 
 export default function App(
   { 
@@ -8,9 +10,14 @@ export default function App(
     pageProps: { session, ...pageProps }
   }: AppProps
 ) {
+
+  const { accounts } = usePolkadotExtension()
+
   return (
     <SessionProvider session={session}>
-      <Component {...pageProps} />
+      <PolkadotExtensionProvider>
+        <Component {...pageProps} />
+      </PolkadotExtensionProvider>
     </SessionProvider>
   )
 }

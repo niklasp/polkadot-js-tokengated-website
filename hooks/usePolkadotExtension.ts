@@ -9,7 +9,7 @@ export function usePolkadotExtension() {
 
   useEffect(() => {
     extensionSetup()
-  }, [])
+  }, [ extensionInstalled ])
 
   const extensionSetup = async () => {
     const { web3Accounts, web3Enable, web3FromAddress } = await import(
@@ -26,13 +26,13 @@ export function usePolkadotExtension() {
     setActingAccount(accounts[0])
 
     // we can use web3FromSource which will return an InjectedExtension type
-    // if ( actingAccount?.address) {
+    if ( accounts.length > 0 ) {
       // the address we use to use for signing, as injected
     
       // finds an injector for an address
       const injector = await web3FromAddress(accounts[0].address);
       setInjector( injector )
-    // }
+    }
     
   };
 

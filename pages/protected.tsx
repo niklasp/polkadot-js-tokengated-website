@@ -19,9 +19,6 @@ export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.El
     },
   })
 
-  // format the big number to a human readable format
-  const ksmBalance = formatBalance( freeBalance, { decimals: 12, withSi: true, withUnit: 'KSM' } )
-
   if (status === "loading") {
     return (
       <main className={ styles.protected }>
@@ -30,6 +27,9 @@ export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.El
       </main>
     )
   }
+
+  // format the big number to a human readable format
+  const ksmBalance = formatBalance( freeBalance, { decimals: 12, withSi: true, withUnit: 'KSM' } )
   
   return (
     <main className={ styles.protected }>
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      freeBalance: session?.freeBalance ?? BN_ZERO,
+      freeBalance: session?.freeBalance ?? JSON.stringify(BN_ZERO),
     }
   }
 }

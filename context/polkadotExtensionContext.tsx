@@ -50,7 +50,10 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
     }
   }
 
-  Accounts()
+  useEffect(() => {
+    Accounts()
+  }, [])
+
 
   return (
       <PolkadotExtensionContext.Provider value={ { 

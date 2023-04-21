@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
 import type { InjectedExtension } from "@polkadot/extension-inject/types";
-import { WalletAccount, getWallets, isWalletInstalled } from "@talismn/connect-wallets";
+import { SubscriptionFn, WalletAccount, getWallets, isWalletInstalled } from "@talismn/connect-wallets";
 
 type PolkadotExtensionContextType = {
     accounts: WalletAccount[] | undefined;
@@ -34,12 +34,11 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
       try {
         await firstWallet.enable( "Polkadot Tokengated Demo" )
         if ( accounts === undefined || accounts.length === 0 ) {
-          const unsubscribe = await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
+          await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
               console.log("got accounts via talisman connect", allAccounts)
               setAccounts( allAccounts )
               setActingAccountIdx( 0 )
           });
-          unsubscribe()
         }
       } catch (error) {
         console.log( error )

@@ -35,19 +35,16 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
       const firstWallet = installedWallets[0]
 
       // enable the wallet
-      if (firstWallet) {
-        try {
-          await firstWallet.enable( "Polkadot Tokengated Demo" )
-          if ( accounts === undefined || accounts.length === 0 ) {
-            const unsubscribe = await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
-                console.log("got accounts via talisman connect", allAccounts)
-                setAccounts( allAccounts )
-                setActingAccountIdx( 0 )
-            });
-          }
-        } catch (error) {
-          console.log( error )
-        } 
+      try {
+        await firstWallet.enable( "Polkadot Tokengated Demo" )
+        if ( accounts === undefined || accounts.length === 0 ) {
+          const allAccounts = await firstWallet.getAccounts()
+          console.log("got accounts via talisman connect", allAccounts)
+          setAccounts( allAccounts )
+          setActingAccountIdx( 0 )
+        }
+      } catch (error) {
+        console.log( error )
       } 
       setIsInitialized( true )
     }

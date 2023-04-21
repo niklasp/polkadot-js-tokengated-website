@@ -5,15 +5,11 @@ import styles from '@/styles/Home.module.css'
 
 import LoginButton from '@/components/login'
 import { useSession } from 'next-auth/react'
-import { usePolkadotExtension } from '@/hooks/usePolkadotExtension'
 import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  const { data: session } = useSession()
-  const { actingAccount, injector } = usePolkadotExtension()
-
   return (
     <>
       <Head>
@@ -63,12 +59,6 @@ export default function Home() {
               🔐 Go to /protected
             </Link>
           </div>
-
-          <pre className={ styles.sessionDebug }>
-            session: {JSON.stringify(session, null, 2)}<br />
-            actingAccount: { JSON.stringify( actingAccount, null, 2 ) }<br />
-            injector: {JSON.stringify(injector, null, 2)}
-          </pre>
       </main>
     </>
   )

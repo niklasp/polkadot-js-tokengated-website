@@ -63,15 +63,19 @@ export const authOptions: NextAuthOptions = {
         try {
           const message = JSON.parse(credentials.message)
 
-          //TODO verify the domain
+          // verify the message is from the same domain
+          if ( message.uri !== process.env.NEXTAUTH_URL ) {
+            return Promise.reject(new Error('🚫 You shall not pass!'))
+          }
 
-          //verify the nonce
+          // verify the message was not compromised
           if (message.nonce !== credentials.csrfToken ) {
             return Promise.reject(new Error('🚫 You shall not pass!'))
           }
 
           // verify signature of the message
           const { isValid } = signatureVerify(credentials.message, credentials.signature, credentials.address);
+
           if ( ! isValid ) {
             return Promise.reject(new Error('🚫 Invalid Signature'))
           }
@@ -109,7 +113,7 @@ export const authOptions: NextAuthOptions = {
     // maxAge: 3, // uncomment to test session expiration in seconds
   },
   jwt: {
-    secret: "not very secret",
+    secret: process.env.NEXTAUTH_SECRET,
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -120,8 +124,6 @@ export const authOptions: NextAuthOptions = {
     },
     async session(sessionData) {
       const { session, token } = sessionData
-
-      console.log( 'sessionData', sessionData)
 
       session.address = token.sub
       if ( session.address ) {
@@ -135,7 +137,7 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
-  secret: "not very secret",
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/',
     signOut: '/',

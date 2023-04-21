@@ -22,17 +22,14 @@ export default function LoginButton() {
   const injector = actingAccount && actingAccount?.wallet
 
   const handleLogin = async () => {
-    if ( ! actingAccount === false ) {
-      return 
-    }
     try {
       setIsLoading( true )
       let signature = ''
       const message = {
-        // domain: window.location.host,
+        domain: window.location.host,
         address: actingAccount?.address,
         statement: 'Sign in with polkadot extension to the example tokengated example dApp',
-        // uri: window.location.origin,
+        uri: window.location.origin,
         version: '1',
         nonce: await getCsrfToken(),
       }
@@ -44,6 +41,7 @@ export default function LoginButton() {
           // we can use it to sign our message
           const data = await signRaw({
             address: actingAccount.address,
+            domain: message.domain,
             data: JSON.stringify(message),
             type: "bytes"
           });
@@ -71,7 +69,6 @@ export default function LoginButton() {
 
     } catch (error) {
       setError( 'Cancelled Signature' )
-      console.log( error )
       setIsLoading( false )
     }
   }

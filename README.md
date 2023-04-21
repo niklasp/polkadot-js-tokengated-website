@@ -6,6 +6,8 @@ A tutorial that explains how it works will be published soon on [polkadot.study]
 
 ## Run the Project Locally
 
+First copy the .env.local.example to .env.local
+
 First, run the development server:
 
 ```bash

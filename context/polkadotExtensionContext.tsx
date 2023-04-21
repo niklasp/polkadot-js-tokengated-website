@@ -25,6 +25,8 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
 
   const setActingAccountByAddress = (address: string) => {
     setActingAccountIdx( accounts?.findIndex( account => account.address === address ) )
+
+    console.log( 'new acting account idx', actingAccountIdx )
   }
 
   const Accounts = async () => {      

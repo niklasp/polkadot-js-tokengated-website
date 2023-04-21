@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
+import { useContext, useState } from "react";
 
 import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react"
 import AccountSelect from "./account-select";

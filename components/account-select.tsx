@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import Identicon from '@polkadot/react-identicon';
 import 'primereact/resources/themes/md-dark-indigo/theme.css'
 import 'primereact/resources/primereact.min.css'    

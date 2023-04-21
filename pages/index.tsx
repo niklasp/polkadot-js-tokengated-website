@@ -4,7 +4,6 @@ import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 
 import LoginButton from '@/components/login'
-import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })

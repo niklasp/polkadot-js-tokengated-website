@@ -9,7 +9,6 @@ import { GetServerSideProps } from 'next'
 import styles from '@/styles/Home.module.css'
 
 import PolkadotParticles from "@/components/polkadot-particles"
-import Identicon from "@polkadot/react-identicon"
 
 export default function Admin( { freeBalance } : { freeBalance : BN } ) : JSX.Element {
   const { data:session, status } = useSession({

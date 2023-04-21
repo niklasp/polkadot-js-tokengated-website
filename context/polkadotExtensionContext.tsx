@@ -30,7 +30,6 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
       const installedWallets = getWallets().filter(wallet => wallet.installed)
       const firstWallet = installedWallets[0]
 
-      
       // enable the wallet
       if (firstWallet) {
         try {

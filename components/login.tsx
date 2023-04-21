@@ -76,7 +76,7 @@ export default function LoginButton() {
   
   return (
     <>
-      { isWeb3Injected ? 
+      { accounts && accounts.length > 0 ? 
       <>
         <div className={ styles.cardWrap }>
           <div className={ styles.dropDownWrap }>

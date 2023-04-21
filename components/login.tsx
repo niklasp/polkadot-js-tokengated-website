@@ -58,7 +58,7 @@ export default function LoginButton() {
       })
 
       // take the user to the protected page if they are allowed
-      if(result?.url) {
+      if (result?.url) {
         router.push("/protected");
       }
 
@@ -72,7 +72,7 @@ export default function LoginButton() {
   }
 
   const { data: session } = useSession()
-  
+
   return (
     <>
       { accounts.length > 0 ?
@@ -80,7 +80,7 @@ export default function LoginButton() {
         <div className={ styles.cardWrap }>
           <div className={ styles.dropDownWrap }>
             { ! session &&
-              <AccountSelect/> 
+              <AccountSelect/>
             }
           </div>
           { session ?
@@ -109,7 +109,7 @@ export default function LoginButton() {
                 </p>
               </div>
             </>
-              : 
+              :
               <div
                 role="button"
                 onClick={() => handleLogin()}
@@ -119,7 +119,7 @@ export default function LoginButton() {
                   🔑 Let me in <span>-&gt;</span>
                 </h2>
                 <p className={inter.className}>
-                  Click here to sign in with your selected account and check if 
+                  Click here to sign in with your selected account and check if
                   you can view the tokengated content. <br></br>
                   You need &gt; 1 KSM free balance.
                 </p>
@@ -128,7 +128,7 @@ export default function LoginButton() {
           </div>
           { isLoading ? <>Signing In ...</> : <span className={ styles.error }> { error } </span> }
         </>
-        : 
+        :
         <div className={ styles.walletInfo }>
           <p>Please <a className={ styles.colorA } href="https://polkadot.js.org/extension/">install a polkadot wallet browser extension</a> to test this dApp.</p>
           <p>If you have already installed it allow this application to access it.</p>

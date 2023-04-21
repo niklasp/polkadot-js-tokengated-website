@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@polkadot/api": "^10.3.4",
+    "@polkadot/api-augment": "^10.3.4",
     "@polkadot/extension-dapp": "^0.45.5",
     "@polkadot/react-identicon": "^3.1.4",
     "@talismn/connect-wallets": "^1.2.3",
@@ -29,5 +31,8 @@
     "tsparticles-engine": "^2.9.3",
     "tsparticles-preset-confetti": "^2.9.3",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.7"
   }
 }

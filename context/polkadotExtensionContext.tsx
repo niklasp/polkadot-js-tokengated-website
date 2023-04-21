@@ -28,22 +28,26 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
   const initWalletExtension = async () => {      
     if (typeof window !== "undefined" ) {
       const installedWallets = getWallets().filter(wallet => wallet.installed)
+      console.log( 'installedWallets', installedWallets )
       const firstWallet = installedWallets[0]
+      console.log( 'firstWallet', firstWallet )
 
       // enable the wallet
-      try {
-        await firstWallet?.enable( "Polkadot Tokengated Demo" )
-        await firstWallet?.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
-            console.log("got accounts via talisman connect", allAccounts)
-            if ( accounts === undefined || accounts.length === 0 ) {
-              setAccounts( allAccounts )
-              setActingAccountIdx( 0 )
-            }
-        });
-      } catch (error) {
-        console.log( error )
-      } 
-      setIsInitialized( true )
+      if (firstWallet) {
+        try {
+          await firstWallet?.enable( "Polkadot Tokengated Demo" )
+          await firstWallet?.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
+              console.log("got accounts via talisman connect", allAccounts)
+              if ( accounts === undefined || accounts.length === 0 ) {
+                setAccounts( allAccounts )
+                setActingAccountIdx( 0 )
+              }
+          });
+        } catch (error) {
+          console.log( error )
+        } 
+        setIsInitialized( true )
+      }
     }
   }
 

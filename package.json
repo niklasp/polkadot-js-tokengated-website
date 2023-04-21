@@ -11,6 +11,7 @@
   "dependencies": {
     "@polkadot/extension-dapp": "^0.45.5",
     "@polkadot/react-identicon": "^3.1.4",
+    "@talismn/connect-wallets": "^1.2.3",
     "@types/node": "18.15.11",
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",

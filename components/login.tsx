@@ -10,8 +10,6 @@ import styles from '@/styles/Home.module.css'
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { PolkadotExtensionContext } from "@/context/polkadotExtensionContext";
-import { usePolkadotExtension } from "@/hooks/usePolkadotExtension";
-import { isWeb3Injected } from '@polkadot/extension-dapp';
 const inter = Inter({ subsets: ['latin'] })
 
 export default function LoginButton() {
@@ -19,8 +17,9 @@ export default function LoginButton() {
     const [error, setError] = useState<string | undefined>(undefined)
     const [isLoading, setIsLoading] = useState( false )
 
-    const { accounts, isWeb3Injected, injector, actingAccountIdx } = useContext(PolkadotExtensionContext)
+    const { accounts, isWeb3Injected, actingAccountIdx } = useContext(PolkadotExtensionContext)
     const actingAccount = accounts[actingAccountIdx]
+    const injector = actingAccount?.wallet
 
     const handleLogin = async () => {
         try {
@@ -54,7 +53,7 @@ export default function LoginButton() {
             redirect: false,
             callbackUrl: '/protected',
             message: JSON.stringify(message),
-            name: actingAccount?.meta.name,
+            name: actingAccount?.name,
             signature,
             address: actingAccount?.address
           })
@@ -69,6 +68,7 @@ export default function LoginButton() {
 
         } catch (error) {
           setError( 'Cancelled Signature' )
+          console.log( error )
           setIsLoading( false )
         }
       }
@@ -77,7 +77,7 @@ export default function LoginButton() {
   
   return (
     <>
-      isWeb3Injected: { isWeb3Injected ? 'true' : 'false' }
+      actingAccount: { JSON.stringify( actingAccount?.wallet.signer ) }
       { isWeb3Injected ? 
       <>
         <div className={ styles.cardWrap }>

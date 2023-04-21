@@ -16,7 +16,7 @@ export const accountValueTemplate = (option: any, props: any) => {
                     size={32}
                     theme='polkadot'
                 />
-                {option?.meta.name }
+                {option?.name }
             </div>
         </div>
     );
@@ -34,7 +34,7 @@ export const accountOptionTemplate = (option: any) => {
                     size={32}
                     theme='polkadot'
                 />
-                {option?.meta.name }
+                {option?.name }
             </div>
         </div>
     );

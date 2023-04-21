@@ -11,8 +11,6 @@ export default function App(
   }: AppProps
 ) {
 
-  const { accounts } = usePolkadotExtension()
-
   return (
     <SessionProvider session={session}>
       <PolkadotExtensionProvider>

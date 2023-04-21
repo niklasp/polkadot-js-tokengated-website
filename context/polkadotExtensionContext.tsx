@@ -9,8 +9,6 @@ type PolkadotExtensionContextType = {
     setActingAccountByAddress: (address: string) => void;
     injector: InjectedExtension | undefined;
     isInitialized: boolean;
-    initWalletExtension: () => Promise<void>;
-  
 }
 
 export const PolkadotExtensionContext = 
@@ -30,18 +28,18 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
   const initWalletExtension = async () => {      
     if (typeof window !== "undefined" ) {
       const installedWallets = getWallets().filter(wallet => wallet.installed)
-
-      console.log( 'installedWallets', installedWallets, accounts )
       const firstWallet = installedWallets[0]
 
       // enable the wallet
       try {
         await firstWallet.enable( "Polkadot Tokengated Demo" )
         if ( accounts === undefined || accounts.length === 0 ) {
-          const allAccounts = await firstWallet.getAccounts()
-          console.log("got accounts via talisman connect", allAccounts)
-          setAccounts( allAccounts )
-          setActingAccountIdx( 0 )
+          const unsubscribe = await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
+              console.log("got accounts via talisman connect", allAccounts)
+              setAccounts( allAccounts )
+              setActingAccountIdx( 0 )
+          });
+          unsubscribe()
         }
       } catch (error) {
         console.log( error )
@@ -50,9 +48,7 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
     }
   }
 
-  useEffect(() => {
-    initWalletExtension()
-  }, [])
+  initWalletExtension()
 
   return (
       <PolkadotExtensionContext.Provider value={ { 
@@ -62,7 +58,6 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
         setActingAccountByAddress,
         injector,
         isInitialized,
-        initWalletExtension,
       } }>
           {children}
       </PolkadotExtensionContext.Provider>

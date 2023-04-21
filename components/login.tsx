@@ -16,7 +16,7 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState( false )
 
-  const { initWalletExtension, isInitialized, accounts, actingAccountIdx } = useContext(PolkadotExtensionContext)
+  const { isInitialized, accounts, actingAccountIdx } = useContext(PolkadotExtensionContext)
   const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
   const injector = actingAccount && actingAccount?.wallet
 
@@ -132,7 +132,7 @@ export default function LoginButton() {
         : 
         <div className={ styles.walletInfo }>
           <p>Please <a className={ styles.colorA } href="https://polkadot.js.org/extension/">install a polkadot wallet browser extension</a> to test this dApp.</p>
-          <p>If you have already installed it <a href="#" className={ styles.colorA } onClick={ initWalletExtension }>allow this application to access it.</a></p>
+          <p>If you have already installed it allow this application to access it.</p>
         </div>
       }
     </>

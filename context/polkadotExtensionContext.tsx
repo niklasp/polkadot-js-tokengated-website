@@ -32,7 +32,7 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
 
       // enable the wallet
       try {
-        await firstWallet.enable( "Polkadot Tokengated Demo" )
+        await firstWallet?.enable( "Polkadot Tokengated Demo" )
         if ( accounts === undefined || accounts.length === 0 ) {
           await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
               console.log("got accounts via talisman connect", allAccounts)

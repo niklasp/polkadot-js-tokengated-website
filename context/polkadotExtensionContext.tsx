@@ -28,20 +28,21 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
   const Accounts = async () => {      
     if (typeof window !== "undefined" ) {
       const installedWallets = getWallets().filter(wallet => wallet.installed)
+
+      console.log( 'installedWallets', installedWallets, accounts )
       const firstWallet = installedWallets[0]
 
       // enable the wallet
       if (firstWallet) {
         try {
           await firstWallet.enable( "Polkadot Tokengated Demo" )
-          if ( ! isWeb3Injected ) {
+          if ( accounts === undefined || accounts.length === 0 ) {
             const unsubscribe = await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
                 console.log("got accounts via talisman connect", allAccounts)
                 setAccounts( allAccounts )
                 setActingAccountIdx( 0 )
             });
           }
-          setIsWeb3Injected( installedWallets.length > 0 )
         } catch (error) {
           console.log( error )
         } 

@@ -16,7 +16,7 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState( false )
 
-  const { accounts, isWeb3Injected, actingAccountIdx } = useContext(PolkadotExtensionContext)
+  const { accounts, actingAccountIdx } = useContext(PolkadotExtensionContext)
   const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
   const injector = actingAccount && actingAccount?.wallet
 

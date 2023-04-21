@@ -63,12 +63,16 @@ export const authOptions: NextAuthOptions = {
         try {
           const message = JSON.parse(credentials.message)
 
-          // verify the message is from the same domain
-          // if ( message.uri !== process.env.NEXTAUTH_URL ) {
-          //   return Promise.reject(new Error('🚫 You shall not pass!'))
-          // }
+          //verify the message is from the same domain
+          console.log( message.uri, message.uri )
+          console.log( 'process.env.NEXTAUTH_URL', process.env.NEXTAUTH_URL )
+          if ( message.uri !== process.env.NEXTAUTH_URL ) {
+            return Promise.reject(new Error('🚫 You shall not pass!'))
+          }
 
           // verify the message was not compromised
+          console.log( message.nonce, message.nonce )
+          console.log( 'credentials.csrfToken', credentials.csrfToken )
           if (message.nonce !== credentials.csrfToken ) {
             return Promise.reject(new Error('🚫 You shall not pass!'))
           }
@@ -81,7 +85,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           // verify the account has the defined token
-          const wsProvider = new WsProvider('wss://kusama-rpc.dwellir.com')
+          const wsProvider = new WsProvider( process.env.RPC_ENDPOINT ?? 'wss://kusama-rpc.dwellir.com' )
           const api = await ApiPromise.create({ provider: wsProvider });
           
           if ( credentials?.address ) {

@@ -1,7 +1,5 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
-import type { InjectedAccountWithMeta, InjectedExtension, InjectedWindow } from "@polkadot/extension-inject/types";
-import { isDeepStrictEqual } from "util";
-// import { web3Accounts, web3Enable, web3FromAddress, web3AccountsSubscribe, web3EnablePromise, isWeb3Injected } from "@polkadot/extension-dapp";
+import type { InjectedExtension } from "@polkadot/extension-inject/types";
 import { WalletAccount, getWallets, isWalletInstalled } from "@talismn/connect-wallets";
 
 type PolkadotExtensionContextType = {
@@ -25,8 +23,6 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
 
   const setActingAccountByAddress = (address: string) => {
     setActingAccountIdx( accounts?.findIndex( account => account.address === address ) )
-
-    console.log( 'new acting account idx', actingAccountIdx )
   }
 
   const Accounts = async () => {      
@@ -37,15 +33,15 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
       // enable the wallet
       if (firstWallet) {
         try {
-          await firstWallet.enable( "nextjs connect" )
+          await firstWallet.enable( "Polkadot Tokengated Demo" )
           if ( ! isWeb3Injected ) {
+            setIsWeb3Injected( true )
             const unsubscribe = await firstWallet.subscribeAccounts((allAccounts: WalletAccount[] | undefined) => {
                 console.log("got accounts via talisman connect", allAccounts)
                 setAccounts( allAccounts )
                 setActingAccountIdx( 0 )
             });
           }
-          setIsWeb3Injected( true )
         } catch (error) {
           console.log( error )
         } 

@@ -96,7 +96,7 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
   useEffect(() => {
     if ( typeof window !== "undefined" ) {
       const w = Object.keys((globalThis as InjectedWindow).injectedWeb3 )
-      if ( w && Object.keys((globalThis as InjectedWindow).injectedWeb3 ).length > 0 ) {
+      if ( w && w !== undefined && Object.keys((globalThis as InjectedWindow).injectedWeb3 ).length > 0 ) {
         setAllowExtensionConnection(true)
       }
     }

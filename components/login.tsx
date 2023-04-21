@@ -16,9 +16,9 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState( false )
 
-  const { isInitialized, accounts, actingAccountIdx } = useContext(PolkadotExtensionContext)
+  const { isInitialized, accounts, actingAccountIdx, injector } = useContext(PolkadotExtensionContext)
   const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
-  const injector = actingAccount && actingAccount?.wallet
+  // we can use web3FromSource which will return an InjectedExtension type
 
   const handleLogin = async () => {
     try {
@@ -40,7 +40,6 @@ export default function LoginButton() {
           // we can use it to sign our message
           const data = await signRaw({
             address: actingAccount.address,
-            domain: message.domain,
             data: JSON.stringify(message),
             type: "bytes"
           });
@@ -53,7 +52,7 @@ export default function LoginButton() {
         redirect: false,
         callbackUrl: '/protected',
         message: JSON.stringify(message),
-        name: actingAccount?.name,
+        name: actingAccount?.meta?.name,
         signature,
         address: actingAccount?.address
       })
@@ -76,7 +75,7 @@ export default function LoginButton() {
   
   return (
     <>
-      { isInitialized ?
+      { accounts.length > 0 ?
       <>
         <div className={ styles.cardWrap }>
           <div className={ styles.dropDownWrap }>

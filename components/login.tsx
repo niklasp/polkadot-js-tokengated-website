@@ -13,71 +13,73 @@ import { PolkadotExtensionContext } from "@/context/polkadotExtensionContext";
 const inter = Inter({ subsets: ['latin'] })
 
 export default function LoginButton() {
-    const router = useRouter()
-    const [error, setError] = useState<string | undefined>(undefined)
-    const [isLoading, setIsLoading] = useState( false )
+  const router = useRouter()
+  const [error, setError] = useState<string | undefined>(undefined)
+  const [isLoading, setIsLoading] = useState( false )
 
-    const { accounts, isWeb3Injected, actingAccountIdx } = useContext(PolkadotExtensionContext)
-    const actingAccount = accounts[actingAccountIdx]
-    const injector = actingAccount?.wallet
+  const { accounts, isWeb3Injected, actingAccountIdx } = useContext(PolkadotExtensionContext)
+  const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
+  const injector = actingAccount && actingAccount?.wallet
 
-    const handleLogin = async () => {
-        try {
-          setIsLoading( true )
-          let signature = ''
-          const message = {
-            // domain: window.location.host,
-            address: actingAccount?.address,
-            statement: 'Sign in with polkadot extension to the example tokengated example dApp',
-            // uri: window.location.origin,
-            version: '1',
-            nonce: await getCsrfToken(),
-          }
-
-          const signRaw = injector?.signer?.signRaw;
-
-          if (!!signRaw && !!actingAccount) {
-              // after making sure that signRaw is defined
-              // we can use it to sign our message
-              const data = await signRaw({
-                address: actingAccount.address,
-                data: JSON.stringify(message),
-                type: "bytes"
-              });
-
-              signature = data.signature
-          }
-
-          // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
-          const result = await signIn('credentials', {
-            redirect: false,
-            callbackUrl: '/protected',
-            message: JSON.stringify(message),
-            name: actingAccount?.name,
-            signature,
-            address: actingAccount?.address
-          })
-
-          setError( result?.error )
-          setIsLoading( false )
-
-          // take the user to the protected page if they are allowed
-          if(result?.url) {
-            router.push("/protected");
-          }
-
-        } catch (error) {
-          setError( 'Cancelled Signature' )
-          console.log( error )
-          setIsLoading( false )
-        }
+  const handleLogin = async () => {
+    if ( ! actingAccount === false ) {
+      return 
+    }
+    try {
+      setIsLoading( true )
+      let signature = ''
+      const message = {
+        // domain: window.location.host,
+        address: actingAccount?.address,
+        statement: 'Sign in with polkadot extension to the example tokengated example dApp',
+        // uri: window.location.origin,
+        version: '1',
+        nonce: await getCsrfToken(),
       }
+
+      const signRaw = injector?.signer?.signRaw;
+
+      if (!!signRaw && !!actingAccount) {
+          // after making sure that signRaw is defined
+          // we can use it to sign our message
+          const data = await signRaw({
+            address: actingAccount.address,
+            data: JSON.stringify(message),
+            type: "bytes"
+          });
+
+          signature = data.signature
+      }
+
+      // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
+      const result = await signIn('credentials', {
+        redirect: false,
+        callbackUrl: '/protected',
+        message: JSON.stringify(message),
+        name: actingAccount?.name,
+        signature,
+        address: actingAccount?.address
+      })
+
+      setError( result?.error )
+      setIsLoading( false )
+
+      // take the user to the protected page if they are allowed
+      if(result?.url) {
+        router.push("/protected");
+      }
+
+    } catch (error) {
+      setError( 'Cancelled Signature' )
+      console.log( error )
+      setIsLoading( false )
+    }
+  }
 
   const { data: session, status } = useSession()
   
   return (
     <>
-      actingAccount: { JSON.stringify( actingAccount?.wallet.signer ) }
       { isWeb3Injected ? 
       <>
         <div className={ styles.cardWrap }>

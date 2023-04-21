@@ -16,7 +16,7 @@ export const accountValueTemplate = (option: any, props: any) => {
                     size={32}
                     theme='polkadot'
                 />
-                {option?.name }
+                {option?.meta.name }
             </div>
         </div>
     );
@@ -42,7 +42,7 @@ export const accountOptionTemplate = (option: any) => {
 
 export default function AccountSelector( ) {
     const { accounts, actingAccountIdx, setActingAccountIdx, setActingAccountByAddress } = useContext(PolkadotExtensionContext)
-    const actingAccount = accounts[actingAccountIdx]
+    // const actingAccount = accounts[actingAccountIdx]
 
     return (
         <Dropdown 
@@ -50,7 +50,7 @@ export default function AccountSelector( ) {
             optionLabel="address" 
             placeholder="Select Account"
             className={ styles.dropdown }
-            value={ actingAccount }
+            value={ undefined }
             itemTemplate={ accountOptionTemplate }
             valueTemplate={ accountValueTemplate }
             onChange={(event) => {

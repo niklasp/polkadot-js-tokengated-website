@@ -16,7 +16,7 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState( false )
 
-  const { accounts, actingAccountIdx } = useContext(PolkadotExtensionContext)
+  const { initWalletExtension, isInitialized, accounts, actingAccountIdx } = useContext(PolkadotExtensionContext)
   const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
   const injector = actingAccount && actingAccount?.wallet
 
@@ -58,13 +58,13 @@ export default function LoginButton() {
         address: actingAccount?.address
       })
 
-      setError( result?.error )
-      setIsLoading( false )
-
       // take the user to the protected page if they are allowed
       if(result?.url) {
         router.push("/protected");
       }
+
+      setError( result?.error )
+      setIsLoading( false )
 
     } catch (error) {
       setError( 'Cancelled Signature' )
@@ -72,11 +72,11 @@ export default function LoginButton() {
     }
   }
 
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   
   return (
     <>
-      { accounts && accounts.length > 0 ? 
+      { isInitialized ?
       <>
         <div className={ styles.cardWrap }>
           <div className={ styles.dropDownWrap }>
@@ -130,9 +130,9 @@ export default function LoginButton() {
           { isLoading ? <>Signing In ...</> : <span className={ styles.error }> { error } </span> }
         </>
         : 
-        <div>
-          Please <a className={ styles.colorA } href="https://polkadot.js.org/extension/">install a polkadot wallet browser extension</a> to test this dApp.
-          <p>If you have already installed it, allow this application to access it.</p>
+        <div className={ styles.walletInfo }>
+          <p>Please <a className={ styles.colorA } href="https://polkadot.js.org/extension/">install a polkadot wallet browser extension</a> to test this dApp.</p>
+          <p>If you have already installed it <a href="#" className={ styles.colorA } onClick={ initWalletExtension }>allow this application to access it.</a></p>
         </div>
       }
     </>

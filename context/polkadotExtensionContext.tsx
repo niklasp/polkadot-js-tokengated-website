@@ -8,14 +8,16 @@ type PolkadotExtensionContextType = {
     setActingAccountIdx: (idx: number) => void;
     setActingAccountByAddress: (address: string) => void;
     injector: InjectedExtension | undefined;
-    isWeb3Injected: boolean;
+    isInitialized: boolean;
+    initWalletExtension: () => Promise<void>;
+  
 }
 
 export const PolkadotExtensionContext = 
     createContext<PolkadotExtensionContextType>({} as PolkadotExtensionContextType);
 
 export const PolkadotExtensionProvider = ( { children } : { children : ReactNode }) => {
-  const [ initialized, setInitialized ] = useState<boolean>( false )
+  const [isInitialized, setIsInitialized ] = useState<boolean>( false )
   const [accounts, setAccounts] = useState<WalletAccount[] | undefined>([]);
   const [actingAccountIdx, setActingAccountIdx] = useState<number | undefined>( undefined );
   const [isWeb3Injected, setIsWeb3Injected] = useState<boolean>(false);
@@ -25,7 +27,7 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
     setActingAccountIdx( accounts?.findIndex( account => account.address === address ) )
   }
 
-  const Accounts = async () => {      
+  const initWalletExtension = async () => {      
     if (typeof window !== "undefined" ) {
       const installedWallets = getWallets().filter(wallet => wallet.installed)
 
@@ -47,13 +49,13 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
           console.log( error )
         } 
       } 
+      setIsInitialized( true )
     }
   }
 
   useEffect(() => {
-    Accounts()
+    initWalletExtension()
   }, [])
-
 
   return (
       <PolkadotExtensionContext.Provider value={ { 
@@ -62,7 +64,8 @@ export const PolkadotExtensionProvider = ( { children } : { children : ReactNode
         setActingAccountIdx,
         setActingAccountByAddress,
         injector,
-        isWeb3Injected,
+        isInitialized,
+        initWalletExtension,
       } }>
           {children}
       </PolkadotExtensionContext.Provider>

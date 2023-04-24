@@ -1,7 +1,7 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { SessionProvider } from "next-auth/react"
-import { PolkadotExtensionProvider } from '@/context/polkadotExtensionContext'
+import { PolkadotExtensionContextProvider } from '@/context/polkadotExtensionContext'
 import { Analytics } from '@vercel/analytics/react'
 
 export default function App(
@@ -13,10 +13,10 @@ export default function App(
 
   return (
     <SessionProvider session={session}>
-      <PolkadotExtensionProvider>
+      <PolkadotExtensionContextProvider>
         <Component {...pageProps} />
         <Analytics />
-      </PolkadotExtensionProvider>
+      </PolkadotExtensionContextProvider>
     </SessionProvider>
   )
 }

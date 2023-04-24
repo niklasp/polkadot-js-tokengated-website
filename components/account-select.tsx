@@ -4,7 +4,7 @@ import 'primereact/resources/themes/md-dark-indigo/theme.css'
 import 'primereact/resources/primereact.min.css'    
 import { Dropdown } from 'primereact/dropdown'
 import styles from '@/styles/Home.module.css'
-import { PolkadotExtensionContext } from '@/context/polkadotExtensionContext';
+import { usePolkadotExtension } from '@/hooks/use-polkadot-extension';
 
 export const accountValueTemplate = (option: any, props: any) => {
     if ( option ) {
@@ -41,12 +41,11 @@ export const accountOptionTemplate = (option: any) => {
 };
 
 export default function AccountSelector( ) {
-    const { accounts, actingAccountIdx, setActingAccountByAddress } = useContext(PolkadotExtensionContext)
-    const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
+    const { accounts, actingAccount, setActingAccountIdx } = usePolkadotExtension()
 
     return (
         <Dropdown 
-            options={ accounts }
+            options={ accounts ?? undefined }
             optionLabel="address" 
             placeholder="Select Account"
             className={ styles.dropdown }
@@ -54,31 +53,9 @@ export default function AccountSelector( ) {
             itemTemplate={ accountOptionTemplate }
             valueTemplate={ accountValueTemplate }
             onChange={(event) => {
-                setActingAccountByAddress(event.target.value.address)
+                const accountIdx = accounts ? accounts.findIndex((account) => account.address === event.target.value.address) : 0
+                setActingAccountIdx(accountIdx)
             }}
         />
     )
-    
-
-    // return (
-    //     <>
-    //         <label for="select-polkadot-account">
-    //             Select the account you want to use
-    //         </label>
-    //         <select
-    //             id="select-polkadot-account"
-    //             className="p-3 m-3 border-2 border-green-500"
-    //             onChange={(event) => {
-    //             console.log(event);
-    //             onSelectAccount(event.target.value);
-    //             }}
-    //         >
-    //             {accounts.map((a) => (
-    //             <option key={a.address} value={a.address}>
-    //                 {a.address} [{a.meta.name}]
-    //             </option>
-    //             ))}
-    //         </select>
-    //     </>
-    // )
 }

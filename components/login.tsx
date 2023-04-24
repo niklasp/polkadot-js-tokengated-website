@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import styles from '@/styles/Home.module.css'
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { PolkadotExtensionContext } from "@/context/polkadotExtensionContext";
+import { usePolkadotExtension } from "@/hooks/use-polkadot-extension";
 const inter = Inter({ subsets: ['latin'] })
 
 export default function LoginButton() {
@@ -16,8 +16,7 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState( false )
 
-  const { isInitialized, accounts, actingAccountIdx, injector } = useContext(PolkadotExtensionContext)
-  const actingAccount = actingAccountIdx !== undefined ? accounts?.[actingAccountIdx] : undefined
+  const { accounts, actingAccount, injector } = usePolkadotExtension()
   // we can use web3FromSource which will return an InjectedExtension type
 
   const handleLogin = async () => {
@@ -58,7 +57,7 @@ export default function LoginButton() {
       })
 
       // take the user to the protected page if they are allowed
-      if (result?.url) {
+      if(result?.url) {
         router.push("/protected");
       }
 
@@ -72,15 +71,15 @@ export default function LoginButton() {
   }
 
   const { data: session } = useSession()
-
+  
   return (
     <>
-      { accounts.length > 0 ?
+      { accounts && accounts.length > 0 ?
       <>
         <div className={ styles.cardWrap }>
           <div className={ styles.dropDownWrap }>
             { ! session &&
-              <AccountSelect/>
+              <AccountSelect/> 
             }
           </div>
           { session ?
@@ -109,7 +108,7 @@ export default function LoginButton() {
                 </p>
               </div>
             </>
-              :
+              : 
               <div
                 role="button"
                 onClick={() => handleLogin()}
@@ -119,7 +118,7 @@ export default function LoginButton() {
                   🔑 Let me in <span>-&gt;</span>
                 </h2>
                 <p className={inter.className}>
-                  Click here to sign in with your selected account and check if
+                  Click here to sign in with your selected account and check if 
                   you can view the tokengated content. <br></br>
                   You need &gt; 1 KSM free balance.
                 </p>
@@ -128,7 +127,7 @@ export default function LoginButton() {
           </div>
           { isLoading ? <>Signing In ...</> : <span className={ styles.error }> { error } </span> }
         </>
-        :
+        : 
         <div className={ styles.walletInfo }>
           <p>Please <a className={ styles.colorA } href="https://polkadot.js.org/extension/">install a polkadot wallet browser extension</a> to test this dApp.</p>
           <p>If you have already installed it allow this application to access it.</p>

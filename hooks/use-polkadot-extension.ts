@@ -47,24 +47,62 @@ export const checkEnabled: (extensionName: string) => Promise<checkEnabledReturn
     const [actingAccountIdx, setActingAccountIdx] = useState<number>(0)
     const [error, setError] = useState<Error | null>(null)
     const [injector, setInjector] = useState<InjectedExtension | null>(null)
+    const [extensions, setExtensions] = useState<InjectedExtension[] | null>(null)
 
     const actingAccount = accounts && accounts[actingAccountIdx]
-  
+
     useEffect(() => {
-        const maybeEnable = async () => {
-            console.log( 'here at maybeEnable')
-            if (isMounted) {
-                const enablePromise = checkEnabled('polkadot-extension')                
-                const enableResult = await enablePromise
-                const { accounts, error } = enableResult
-
-                setError(error)
-                setAccounts(accounts)
-            }
+      const setup = async () => {
+        const extensionDapp = await import("@polkadot/extension-dapp");
+        const { web3AccountsSubscribe, web3Enable, web3Accounts } = extensionDapp;
+        // const enabledApps = await web3Enable("polkadot-extension");
+  
+        const injectedPromise = await web3Enable("polkadot-extension");
+        const _extensions = await injectedPromise;
+  
+        setExtensions(_extensions);
+  
+        if (_extensions.length === 0) {
+          console.log("no extension");
+          return;
         }
-
-        maybeEnable()
+    
+        if (accounts) {
+          setIsReady(true);
+        } else {
+          let unsubscribe: () => void;
+  
+          // we subscribe to any account change and log the new list.
+          // note that `web3AccountsSubscribe` returns the function to unsubscribe
+          unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
+            console.log( 'receivedAccounts', injectedAccounts )
+            setAccounts(injectedAccounts);
+          });
+  
+          return () => unsubscribe && unsubscribe();
+        }
+      };
+  
+      if (!isReady) {
+        setup();
+      }
     }, []);
+  
+    // useEffect(() => {
+    //     const maybeEnable = async () => {
+    //         console.log( 'here at maybeEnable')
+    //         if (isMounted) {
+    //             const enablePromise = checkEnabled('polkadot-extension')                
+    //             const enableResult = await enablePromise
+    //             const { accounts, error } = enableResult
+
+    //             setError(error)
+    //             setAccounts(accounts)
+    //         }
+    //     }
+
+    //     maybeEnable()
+    // }, []);
 
     useEffect(() => {
         if ( isMounted ) {

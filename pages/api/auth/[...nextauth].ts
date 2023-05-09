@@ -94,6 +94,7 @@ export const authOptions: NextAuthOptions = {
             process.env.RPC_ENDPOINT ?? 'wss://kusama-rpc.dwellir.com',
           );
           const api = await ApiPromise.create({ provider: wsProvider });
+          await api.isReady;
 
           if (credentials?.address) {
             const ksmAddress = encodeAddress(credentials.address, 2);

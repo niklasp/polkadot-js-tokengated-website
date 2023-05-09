@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import styles from '@/styles/Home.module.css'
 import { Inter } from "next/font/google";
 import Link from "next/link";
-import { usePolkadotExtension } from "@/hooks/use-polkadot-extension";
+import { usePolkadotExtensionWithContext } from "@/context/polkadotExtensionContext";
 const inter = Inter({ subsets: ['latin'] })
 
 export default function LoginButton() {
@@ -16,7 +16,7 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState( false )
 
-  const { accounts, actingAccount, injector } = usePolkadotExtension()
+  const { accounts, actingAccount, injector } = usePolkadotExtensionWithContext()
   // we can use web3FromSource which will return an InjectedExtension type
 
   const handleLogin = async () => {

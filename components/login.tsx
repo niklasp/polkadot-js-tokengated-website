@@ -49,7 +49,7 @@ export default function LoginButton() {
       // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
       const result = await signIn('credentials', {
         redirect: false,
-        callbackUrl: '/protected',
+        callbackUrl: '/protected-api',
         message: JSON.stringify(message),
         name: actingAccount?.meta?.name,
         signature,
@@ -58,7 +58,7 @@ export default function LoginButton() {
 
       // take the user to the protected page if they are allowed
       if(result?.url) {
-        router.push("/protected");
+        router.push("/protected-api");
       }
 
       setError( result?.error )
@@ -85,7 +85,7 @@ export default function LoginButton() {
           { session ?
             <>
               <Link
-                href="/protected"
+                href="/protected-api"
                 className={styles.card}
               >
                 <h2 className={inter.className}>

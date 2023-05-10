@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { signatureVerify } from '@polkadot/util-crypto';
 import { encodeAddress } from '@polkadot/keyring';
@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
           placeholder: 'name',
         },
       },
-      async authorize(credentials): Promise<any | null> {
+      async authorize(credentials): Promise<User | null> {
         if (credentials === undefined) {
           return null;
         }
@@ -65,25 +65,23 @@ export const authOptions: NextAuthOptions = {
           const message = JSON.parse(credentials.message);
 
           //verify the message is from the same domain
-          console.log(message.uri, message.uri);
-          console.log('process.env.NEXTAUTH_URL', process.env.NEXTAUTH_URL);
           if (message.uri !== process.env.NEXTAUTH_URL) {
             return Promise.reject(new Error('🚫 You shall not pass!'));
           }
 
           // verify the message was not compromised
-          console.log(message.nonce, message.nonce);
-          console.log('credentials.csrfToken', credentials.csrfToken);
           if (message.nonce !== credentials.csrfToken) {
             return Promise.reject(new Error('🚫 You shall not pass!'));
           }
 
           // verify signature of the message
+          // highlight-start
           const { isValid } = signatureVerify(
             credentials.message,
             credentials.signature,
             credentials.address,
           );
+          // highlight-end
 
           if (!isValid) {
             return Promise.reject(new Error('🚫 Invalid Signature'));
@@ -98,6 +96,7 @@ export const authOptions: NextAuthOptions = {
 
           if (credentials?.address) {
             const ksmAddress = encodeAddress(credentials.address, 2);
+            // highlight-start
             const accountInfo = await api.query.system.account(ksmAddress);
 
             if (accountInfo.data.free.gt(new BN(1_000_000_000_000))) {
@@ -111,6 +110,7 @@ export const authOptions: NextAuthOptions = {
             } else {
               return Promise.reject(new Error('🚫 The gate is closed for you'));
             }
+            // highlight-end
           }
 
           return Promise.reject(new Error('🚫 API Error'));

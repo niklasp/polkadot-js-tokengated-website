@@ -6,10 +6,8 @@ import {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
-  useState,
+
 } from "react";
-import { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 import {
   usePolkadotExtension,
   UsePolkadotExtensionReturnType,

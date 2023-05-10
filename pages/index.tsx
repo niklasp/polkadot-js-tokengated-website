@@ -55,7 +55,13 @@ export default function Home() {
               href="/protected"
               rel="noopener noreferrer"
             >
-              🔐 Go to /protected
+              🔐 Go to /protected (SSR)
+            </Link>
+            <Link
+              href="/protected-api"
+              rel="noopener noreferrer"
+            >
+              🔐 Go to /protected-api (Static)
             </Link>
           </div>
       </main>

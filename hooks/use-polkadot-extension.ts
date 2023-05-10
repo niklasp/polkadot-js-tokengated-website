@@ -3,54 +3,7 @@ import {
   InjectedExtension,
 } from "@polkadot/extension-inject/types";
 import { useEffect, useState } from "react";
-import { useIsMounted } from "./use-is-mounted";
 import { documentReadyPromise } from "./utils";
-
-interface checkEnabledReturnType {
-  accounts: InjectedAccountWithMeta[] | null;
-  error: Error | null;
-}
-
-export const extensionSetup = async () => {
-  const extensionDapp = await import("@polkadot/extension-dapp");
-  const { web3Accounts, web3Enable, web3AccountsSubscribe } = extensionDapp;
-  const enabledApps = await web3Enable("polkadot-extension");
-  console.log("enabled Apps", enabledApps);
-  if (enabledApps.length === 0) {
-    console.log("no extension");
-    return;
-  }
-};
-
-export const checkEnabled: (
-  extensionName: string
-) => Promise<checkEnabledReturnType> = async (
-  extensionName: string = "polkadot-extension"
-) => {
-  const extensionDapp = await import("@polkadot/extension-dapp");
-  const { web3Accounts, web3Enable } = extensionDapp;
-  try {
-    const enabledApps = await web3Enable(extensionName);
-    console.log("enabled Apps", enabledApps);
-    const w3Enabled = enabledApps.length > 0;
-    let accounts = null;
-
-    if (w3Enabled) {
-      accounts = await web3Accounts();
-      console.log("accounts", accounts);
-      return { accounts, error: null };
-    }
-
-    return {
-      accounts: null,
-      error: new Error(
-        "please allow your extension to access this dApp and refresh the page or install a substrate wallet"
-      ),
-    };
-  } catch (error: any) {
-    return { accounts: null, error };
-  }
-};
 
 export interface UsePolkadotExtensionReturnType {
   isReady: boolean;
@@ -62,7 +15,6 @@ export interface UsePolkadotExtensionReturnType {
 }
 
 export const usePolkadotExtension = (): UsePolkadotExtensionReturnType => {
-  const isMounted = useIsMounted();
   const [isReady, setIsReady] = useState(false);
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[] | null>(
     null
@@ -77,15 +29,14 @@ export const usePolkadotExtension = (): UsePolkadotExtensionReturnType => {
   const actingAccount = accounts && accounts[actingAccountIdx];
 
   useEffect(() => {
-    const setup = async () => {
+    // This effect is used to setup the browser extension
+    const extensionSetup = async () => {
       const extensionDapp = await import("@polkadot/extension-dapp");
-      const { web3AccountsSubscribe, web3Enable, web3Accounts } = extensionDapp;
-      // const enabledApps = await web3Enable("polkadot-extension");
+      const { web3AccountsSubscribe, web3Enable } = extensionDapp;
 
       const injectedPromise = documentReadyPromise(() =>
-        web3Enable("polkadot-extension")
+        web3Enable("Polkadot Tokengated Website Demo")
       );
-      // const injectedPromise = await web3Enable("polkadot-extension");
       const extensions = await injectedPromise;
 
       setExtensions(extensions);
@@ -94,8 +45,6 @@ export const usePolkadotExtension = (): UsePolkadotExtensionReturnType => {
         console.log("no extension");
         return;
       }
-
-      // const accounts = await web3Accounts();
 
       if (accounts) {
         setIsReady(true);
@@ -113,11 +62,13 @@ export const usePolkadotExtension = (): UsePolkadotExtensionReturnType => {
     };
 
     if (!isReady) {
-      setup();
+      extensionSetup();
     }
-  }, [extensions, isReady]);
+  }, [extensions]);
 
   useEffect(() => {
+    // This effect is used to get the injector from the selected account
+    // and is triggered when the accounts or the actingAccountIdx change
     const getInjector = async () => {
       const { web3FromSource } = await import("@polkadot/extension-dapp");
       const actingAccount =

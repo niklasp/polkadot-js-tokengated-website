@@ -45,8 +45,6 @@ export const accountOptionTemplate = (option: any) => {
 export default function AccountSelector( ) {
     const { accounts, actingAccount, setActingAccountIdx } = usePolkadotExtensionWithContext()
 
-    const [accounts,setAccounts] = useState([])
-
     return (
         <Dropdown 
             options={ accounts ?? undefined }

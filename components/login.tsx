@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import { useSession, signIn, signOut, getCsrfToken } from "next-auth/react"
 import AccountSelect from "./account-select";

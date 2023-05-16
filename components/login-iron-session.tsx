@@ -15,15 +15,33 @@ export default function LoginButton() {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
+  const [session, setSession] = useState(null);
 
   const { accounts, actingAccount, injector } = usePolkadotExtensionWithContext();
   // we can use web3FromSource which will return an InjectedExtension type
+
+  const signIn = async (credentials: any) => {
+    const options: RequestInit = {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    };
+
+    const response = fetch('/api/auth/login-with-iron-session', options);
+    const jsonData = (await response).json();
+
+    return jsonData;
+  };
 
   const handleLogin = async () => {
     try {
       setIsLoading(true);
       let signature = '';
       const message = {
+        address: actingAccount?.address,
         statement: 'Sign in with polkadot extension to the example tokengated example dApp',
         uri: window.location.origin,
         version: '1',
@@ -44,8 +62,7 @@ export default function LoginButton() {
         signature = data.signature;
       }
 
-      // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
-      const result = await signIn('credentials', {
+      const result = await signIn({
         redirect: false,
         callbackUrl: '/protected-api',
         message: JSON.stringify(message),
@@ -55,7 +72,7 @@ export default function LoginButton() {
       });
 
       // take the user to the protected page if they are allowed
-      if (result?.url) {
+      if (result?.user) {
         router.push('/protected-api');
       }
 
@@ -66,8 +83,6 @@ export default function LoginButton() {
       setIsLoading(false);
     }
   };
-
-  const { data: session } = useSession();
 
   return (
     <>

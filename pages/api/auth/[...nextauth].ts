@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
         try {
           const message = JSON.parse(credentials.message);
 
-          //verify the message is from the same domain
+          //verify the message is from the same uri
           if (message.uri !== process.env.NEXTAUTH_URL) {
             return Promise.reject(new Error('🚫 You shall not pass!'));
           }

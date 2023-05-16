@@ -2,16 +2,11 @@
 // this component is used in _app.tsx
 //
 // Path: context/polkadot-extension-context.tsx
-import {
-  createContext,
-  ReactNode,
-  useContext,
-
-} from "react";
+import { createContext, ReactNode, useContext } from 'react';
 import {
   usePolkadotExtension,
   UsePolkadotExtensionReturnType,
-} from "@/hooks/use-polkadot-extension";
+} from '@/hooks/use-polkadot-extension';
 
 const PolkadotExtensionContext = createContext<UsePolkadotExtensionReturnType>({
   accounts: [],
@@ -22,14 +17,9 @@ const PolkadotExtensionContext = createContext<UsePolkadotExtensionReturnType>({
   setActingAccountIdx: () => {},
 });
 
-export const usePolkadotExtensionWithContext = () =>
-  useContext(PolkadotExtensionContext);
+export const usePolkadotExtensionWithContext = () => useContext(PolkadotExtensionContext);
 
-export const PolkadotExtensionContextProvider = ({
-  children,
-}: {
-  children: ReactNode;
-}) => {
+export const PolkadotExtensionContextProvider = ({ children }: { children: ReactNode }) => {
   const polkadotExtension = usePolkadotExtension();
 
   return (

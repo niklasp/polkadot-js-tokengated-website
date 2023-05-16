@@ -58,65 +58,8 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials): Promise<User | null> {
-        if (credentials === undefined) {
-          return null;
-        }
-        try {
-          const message = JSON.parse(credentials.message);
-
-          //verify the message is from the same uri
-          if (message.uri !== process.env.NEXTAUTH_URL) {
-            return Promise.reject(new Error('🚫 You shall not pass!'));
-          }
-
-          // verify the message was not compromised
-          if (message.nonce !== credentials.csrfToken) {
-            return Promise.reject(new Error('🚫 You shall not pass!'));
-          }
-
-          // verify signature of the message
-          // highlight-start
-          const { isValid } = signatureVerify(
-            credentials.message,
-            credentials.signature,
-            credentials.address,
-          );
-          // highlight-end
-
-          if (!isValid) {
-            return Promise.reject(new Error('🚫 Invalid Signature'));
-          }
-
-          // verify the account has the defined token
-          const wsProvider = new WsProvider(
-            process.env.RPC_ENDPOINT ?? 'wss://kusama-rpc.dwellir.com',
-          );
-          const api = await ApiPromise.create({ provider: wsProvider });
-          await api.isReady;
-
-          if (credentials?.address) {
-            const ksmAddress = encodeAddress(credentials.address, 2);
-            // highlight-start
-            const accountInfo = await api.query.system.account(ksmAddress);
-
-            if (accountInfo.data.free.gt(new BN(1_000_000_000_000))) {
-              // if the user has a free balance > 1 KSM, we let them in
-              return {
-                id: credentials.address,
-                name: credentials.name,
-                freeBalance: accountInfo.data.free,
-                ksmAddress,
-              };
-            } else {
-              return Promise.reject(new Error('🚫 The gate is closed for you'));
-            }
-            // highlight-end
-          }
-
-          return Promise.reject(new Error('🚫 API Error'));
-        } catch (e) {
-          return null;
-        }
+        //TODO: write an authorize function
+        return null;
       },
     }),
   ],

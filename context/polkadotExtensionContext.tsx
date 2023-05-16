@@ -20,11 +20,6 @@ const PolkadotExtensionContext = createContext<UsePolkadotExtensionReturnType>({
 export const usePolkadotExtensionWithContext = () => useContext(PolkadotExtensionContext);
 
 export const PolkadotExtensionContextProvider = ({ children }: { children: ReactNode }) => {
-  const polkadotExtension = usePolkadotExtension();
-
-  return (
-    <PolkadotExtensionContext.Provider value={polkadotExtension}>
-      {children}
-    </PolkadotExtensionContext.Provider>
-  );
+  //TODO: Return the ContextProvider
+  return <>{children}</>;
 };

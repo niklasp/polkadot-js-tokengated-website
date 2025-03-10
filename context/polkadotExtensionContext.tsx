@@ -1,3 +1,5 @@
+'use client';
+
 // component that returns a context provider for the polkadot extension
 // this component is used in _app.tsx
 //

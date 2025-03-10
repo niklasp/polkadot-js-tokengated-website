@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import Identicon from '@polkadot/react-identicon';
 import { usePolkadotExtensionWithContext } from '@/context/polkadotExtensionContext';

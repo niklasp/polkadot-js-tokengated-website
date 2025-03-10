@@ -1,14 +1,15 @@
+'use client';
+
 import { useState } from 'react';
 
 import { useSession, signIn, signOut, getCsrfToken } from 'next-auth/react';
 import AccountSelect from './account-select';
 
-import { useRouter } from 'next/router';
-
 import styles from '@/styles/Home.module.css';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
 import { usePolkadotExtensionWithContext } from '@/context/polkadotExtensionContext';
+import { useRouter } from 'next/navigation';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function LoginButton() {
@@ -44,22 +45,32 @@ export default function LoginButton() {
         signature = data.signature;
       }
 
-      // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
-      const result = await signIn('credentials', {
+      console.log('signInParams', {
         redirect: false,
-        callbackUrl: '/protected-api',
+        callbackUrl: '/protected',
         message: JSON.stringify(message),
         name: actingAccount?.meta?.name,
         signature,
         address: actingAccount?.address,
+        redirectTo: '/protected',
+      });
+
+      // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
+      const result = await signIn('credentials', {
+        redirect: false,
+        message: JSON.stringify(message),
+        name: actingAccount?.meta?.name,
+        signature,
+        address: actingAccount?.address,
+        redirectTo: '/protected',
       });
 
       // take the user to the protected page if they are allowed
       if (result?.url) {
-        router.push('/protected-api');
+        router.push('/protected');
       }
 
-      setError(result?.error);
+      setError(result?.error ?? '');
       setIsLoading(false);
     } catch (error) {
       setError('Cancelled Signature');

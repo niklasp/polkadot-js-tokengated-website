@@ -9,30 +9,38 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@polkadot/api": "^10.3.4",
-    "@polkadot/api-augment": "^10.3.4",
+    "@polkadot/api": "^10.13.1",
+    "@polkadot/api-augment": "^10.13.1",
     "@polkadot/extension-dapp": "^0.45.5",
-    "@polkadot/react-identicon": "^3.1.4",
-    "@talismn/connect-wallets": "^1.2.3",
+    "@polkadot/keyring": "^13.4.3",
+    "@polkadot/react-identicon": "^3.12.2",
+    "@polkadot/util": "^13.4.3",
+    "@polkadot/util-crypto": "^13.4.3",
+    "@talismn/connect-wallets": "^1.2.8",
     "@types/node": "18.15.11",
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",
-    "@vercel/analytics": "^1.0.0",
+    "@vercel/analytics": "^1.5.0",
     "eslint": "8.38.0",
     "eslint-config-next": "13.3.0",
     "lodash": "^4.17.21",
-    "next": "13.3.0",
-    "next-auth": "^4.22.1",
-    "primereact": "^9.3.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-particles": "^2.9.3",
-    "tsparticles": "^2.9.3",
-    "tsparticles-engine": "^2.9.3",
-    "tsparticles-preset-confetti": "^2.9.3",
+    "next": "15.2.1",
+    "next-auth": "5.0.0-beta.25",
+    "primereact": "^9.6.4",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-particles": "^2.12.2",
+    "tsparticles": "^2.12.0",
+    "tsparticles-engine": "^2.12.0",
+    "tsparticles-preset-confetti": "^2.12.0",
     "typescript": "5.0.4"
   },
   "devDependencies": {
-    "prettier": "^2.8.7"
+    "prettier": "^2.8.8"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "react-particles"
+    ]
   }
 }

@@ -1,19 +1,19 @@
 import '@/styles/globals.css';
-import { PolkadotExtensionContextProvider } from '@/context/polkadotExtensionContext';
 import { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import styles from '@/styles/Home.module.css';
+import { PolkadotExtensionProvider } from '@/providers/polkadot-extension-provider';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <PolkadotExtensionContextProvider>
+      <PolkadotExtensionProvider>
         <html>
           <body>
             <main className={styles.main}>{children}</main>
           </body>
         </html>
-      </PolkadotExtensionContextProvider>
+      </PolkadotExtensionProvider>
     </SessionProvider>
   );
 }

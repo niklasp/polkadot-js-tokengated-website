@@ -1,14 +1,11 @@
 import { JWT } from 'next-auth/jwt';
-import { BN, stringToU8a, hexToU8a } from '@polkadot/util';
 import { User } from 'next-auth';
 import { signatureVerify, cryptoWaitReady } from '@polkadot/util-crypto';
-import { encodeAddress } from '@polkadot/keyring';
 import NextAuth, { type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-import { WsProvider } from '@polkadot/api';
-import { ApiPromise } from '@polkadot/api';
 import { getAccountBalance } from './app/api/auth/[...nextauth]/get-account-balance';
+import { Binary } from 'polkadot-api';
 declare module 'next-auth' {
   interface User {
     /** The user's wallet ss58 address */
@@ -67,14 +64,10 @@ export const { auth, handlers } = NextAuth({
           // First, ensure WASM crypto is ready
           await cryptoWaitReady();
 
-          const message = credentials.message;
-          const messageU8a = stringToU8a(message as string);
-
-          // Standard verification
           const verifyResult = signatureVerify(
-            messageU8a,
-            credentials.signature as string,
-            credentials.address as string,
+            credentials.message,
+            credentials.signature,
+            credentials.address,
           );
 
           if (!verifyResult.isValid) {

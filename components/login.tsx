@@ -3,13 +3,14 @@
 import { useState } from 'react';
 
 import { useSession, signIn, signOut, getCsrfToken } from 'next-auth/react';
-import AccountSelect from './account-select';
 
 import styles from '@/styles/Home.module.css';
 import { Inter } from 'next/font/google';
 import Link from 'next/link';
-import { usePolkadotExtensionWithContext } from '@/context/polkadotExtensionContext';
 import { useRouter } from 'next/navigation';
+import { WalletSelect } from '@/components/wallet-select';
+import { usePolkadotExtension } from '@/providers/polkadot-extension-provider';
+import { Binary } from 'polkadot-api';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function LoginButton() {
@@ -17,13 +18,12 @@ export default function LoginButton() {
   const [error, setError] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { accounts, actingAccount, injector } = usePolkadotExtensionWithContext();
+  const { accounts, activeSigner, initiateConnection, selectedAccount } = usePolkadotExtension();
   // we can use web3FromSource which will return an InjectedExtension type
 
   const handleLogin = async () => {
     try {
       setIsLoading(true);
-      let signature = '';
       const message = {
         statement: 'Sign in with polkadot extension to the example tokengated example dApp',
         uri: window.location.origin,
@@ -31,37 +31,21 @@ export default function LoginButton() {
         nonce: await getCsrfToken(),
       };
 
-      const signRaw = injector?.signer?.signRaw;
+      const signature = await activeSigner?.signBytes(
+        Binary.fromText(JSON.stringify(message)).asBytes(),
+      );
 
-      if (!!signRaw && !!actingAccount) {
-        // after making sure that signRaw is defined
-        // we can use it to sign our message
-        const data = await signRaw({
-          address: actingAccount.address,
-          data: JSON.stringify(message),
-          type: 'bytes',
-        });
-
-        signature = data.signature;
+      if (!signature) {
+        throw new Error('No signature');
       }
-
-      console.log('signInParams', {
-        redirect: false,
-        callbackUrl: '/protected',
-        message: JSON.stringify(message),
-        name: actingAccount?.meta?.name,
-        signature,
-        address: actingAccount?.address,
-        redirectTo: '/protected',
-      });
 
       // will return a promise https://next-auth.js.org/getting-started/client#using-the-redirect-false-option
       const result = await signIn('credentials', {
         redirect: false,
         message: JSON.stringify(message),
-        name: actingAccount?.meta?.name,
-        signature,
-        address: actingAccount?.address,
+        name: selectedAccount?.name,
+        signature: Binary.fromBytes(signature).asHex(),
+        address: selectedAccount?.address,
         redirectTo: '/protected',
       });
 
@@ -85,7 +69,7 @@ export default function LoginButton() {
       {accounts && accounts.length > 0 ? (
         <>
           <div className={styles.cardWrap}>
-            <div className={styles.dropDownWrap}>{!session && <AccountSelect />}</div>
+            <div className={styles.dropDownWrap}>{!session && <WalletSelect />}</div>
             {session ? (
               <>
                 <Link href="/protected" className={styles.card}>

@@ -43,9 +43,9 @@ export function WalletSelect() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default" onClick={initiateConnection}>
+        <Button variant="default" onClick={initiateConnection} className="cursor-pointer">
           <Wallet className="w-4 h-4" />
-          {selectedAccount?.name}
+          {selectedAccount ? selectedAccount.name : 'Connect Wallet'}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] p-0">

@@ -66,10 +66,10 @@ export default function LoginButton() {
 
   return (
     <>
-      {accounts && accounts.length > 0 ? (
+      <WalletSelect />
+      {accounts && accounts.length > 0 && (
         <>
           <div className={styles.cardWrap}>
-            <div className={styles.dropDownWrap}>{!session && <WalletSelect />}</div>
             {session ? (
               <>
                 <Link href="/protected" className={styles.card}>
@@ -105,17 +105,6 @@ export default function LoginButton() {
           </div>
           {isLoading ? <>Signing In ...</> : <span className={styles.error}> {error} </span>}
         </>
-      ) : (
-        <div className={styles.walletInfo}>
-          <p>
-            Please{' '}
-            <a className={styles.colorA} href="https://polkadot.js.org/extension/">
-              install a polkadot wallet browser extension
-            </a>{' '}
-            to test this dApp.
-          </p>
-          <p>If you have already installed it allow this application to access it.</p>
-        </div>
       )}
     </>
   );

@@ -9,7 +9,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
     <SessionProvider>
       <PolkadotExtensionProvider>
         <html>
-          <body>
+          <body className="dark">
             <main className={styles.main}>{children}</main>
           </body>
         </html>

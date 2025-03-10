@@ -66,12 +66,12 @@ export const authOptions: NextAuthOptions = {
 
           //verify the message is from the same uri
           if (message.uri !== process.env.NEXTAUTH_URL) {
-            return Promise.reject(new Error('🚫 You shall not pass!'));
+            return Promise.reject(new Error('🚫 You shall not pass! Invalid URI'));
           }
 
           // verify the message was not compromised
           if (message.nonce !== credentials.csrfToken) {
-            return Promise.reject(new Error('🚫 You shall not pass!'));
+            return Promise.reject(new Error('🚫 You shall not pass! Invalid CSRF Token'));
           }
 
           // verify signature of the message
@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
           // highlight-end
 
           if (!isValid) {
-            return Promise.reject(new Error('🚫 Invalid Signature'));
+            return Promise.reject(new Error('🚫 You shall not pass! Invalid Signature'));
           }
 
           // verify the account has the defined token

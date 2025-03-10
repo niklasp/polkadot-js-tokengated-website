@@ -1,4 +1,6 @@
-import type { Container, Engine } from 'tsparticles-engine';
+'use client';
+
+import type { Engine } from 'tsparticles-engine';
 import Particles from 'react-particles';
 import { loadConfettiPreset } from 'tsparticles-preset-confetti';
 import { loadFull } from 'tsparticles';
@@ -16,7 +18,6 @@ export default function PolkadotParticles() {
       init={particlesInit}
       options={{
         particles: {
-          // add circle shape emitter
           shape: {
             type: 'circle',
           },
@@ -24,14 +25,14 @@ export default function PolkadotParticles() {
             value: ['#E6007A', '#552BBF', '#00B2FF'],
           },
           size: {
-            value: { min: 5, max: 10 },
+            value: { min: 4, max: 10 },
           },
         },
         emitters: {
-          startCount: 200,
+          startCount: 100,
           position: {
             x: 50,
-            y: 50,
+            y: 30,
           },
           size: {
             width: 30,
@@ -43,11 +44,11 @@ export default function PolkadotParticles() {
           },
           life: {
             count: 1,
-            duration: 3,
-            delay: 0,
+            duration: 5,
+            delay: 10,
           },
         },
-        duration: 9,
+        duration: 15,
         preset: 'confetti',
       }}
     />

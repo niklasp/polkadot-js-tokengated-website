@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import styles from '@/styles/Home.module.css';
 import { formatBalance } from '@polkadot/util';
+import PolkadotParticles from '@/components/polkadot-particles';
 
 export default async function ProtectedPage() {
   const session = await auth();
@@ -38,6 +39,7 @@ export default async function ProtectedPage() {
           &lt; go back
         </Link>
       </p>
+      <PolkadotParticles />
     </div>
   );
 }

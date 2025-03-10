@@ -1,22 +1,19 @@
+import { JWT } from 'next-auth/jwt';
 import { BN, stringToU8a, hexToU8a } from '@polkadot/util';
 import { User } from 'next-auth';
-import { signatureVerify, sr25519Verify, cryptoWaitReady } from '@polkadot/util-crypto';
-import { encodeAddress, decodeAddress } from '@polkadot/keyring';
+import { signatureVerify, cryptoWaitReady } from '@polkadot/util-crypto';
+import { encodeAddress } from '@polkadot/keyring';
 import NextAuth, { type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { JWT } from 'next-auth/jwt';
+
 import { WsProvider } from '@polkadot/api';
 import { ApiPromise } from '@polkadot/api';
-// Initialize crypto module
-// This needs to be done once when the server starts
-cryptoWaitReady().catch(console.error);
-
 declare module 'next-auth' {
   interface User {
     /** The user's wallet ss58 address */
     address: string;
     /** The user's wallet name */
-    name: string;
+    name?: string | null;
     /** The user's wallet kusama address */
     ksmAddress: string;
     /** The user's wallet free balance */
@@ -26,7 +23,7 @@ declare module 'next-auth' {
   interface Session {
     user: {
       address: string;
-      name: string;
+      name?: string | null;
       ksmAddress: string;
       freeBalance: string;
       csrfToken: string;
@@ -60,20 +57,28 @@ export const { auth, handlers } = NextAuth({
       },
 
       async authorize(credentials): Promise<User | null> {
-        if (!credentials) return null;
+        if (
+          !credentials ||
+          typeof credentials.message !== 'string' ||
+          typeof credentials.signature !== 'string' ||
+          typeof credentials.address !== 'string' ||
+          typeof credentials.name !== 'string'
+        ) {
+          return Promise.reject(new Error('🚫 Invalid credentials'));
+        }
 
         try {
           // First, ensure WASM crypto is ready
           await cryptoWaitReady();
 
           const message = credentials.message;
-          const messageU8a = stringToU8a(message);
+          const messageU8a = stringToU8a(message as string);
 
           // Standard verification
           const verifyResult = signatureVerify(
             messageU8a,
-            credentials.signature,
-            credentials.address,
+            credentials.signature as string,
+            credentials.address as string,
           );
 
           if (!verifyResult.isValid) {
@@ -98,7 +103,7 @@ export const { auth, handlers } = NextAuth({
               return {
                 id: credentials.address,
                 address: credentials.address,
-                name: credentials.name,
+                name: credentials.name ?? '',
                 freeBalance: accountInfo.data.free.toString(),
                 ksmAddress,
               };
@@ -123,6 +128,7 @@ export const { auth, handlers } = NextAuth({
         token.address = user.address;
         token.ksmAddress = user.ksmAddress;
         token.freeBalance = user.freeBalance;
+        token.name = user.name;
       }
       return token;
     },
@@ -131,6 +137,7 @@ export const { auth, handlers } = NextAuth({
         session.user.address = token.address as string;
         session.user.ksmAddress = token.ksmAddress as string;
         session.user.freeBalance = token.freeBalance as string;
+        session.user.name = token.name as string;
       }
       return session;
     },

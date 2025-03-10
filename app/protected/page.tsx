@@ -26,13 +26,16 @@ export default async function ProtectedPage() {
       <p>Your user details are:</p>
       <pre className={styles.colorA}>{JSON.stringify(session.user, null, 2)}</pre>
       <p>
-        Your free balance is:{' '}
+        Your transferable balance is:{' '}
         <span className={styles.colorA}>
           {formatBalance(session.user.freeBalance, {
-            withUnit: 'KSM',
+            forceUnit: 'DOT',
+            withUnit: 'DOT',
             withSi: false,
+            decimals: 10,
           })}
-        </span>
+        </span>{' '}
+        DOT
       </p>
       <p>
         <Link href="/" className={styles.colorA}>

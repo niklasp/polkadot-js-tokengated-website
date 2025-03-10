@@ -114,7 +114,7 @@ export default function LoginButton() {
                 <p className={inter.className}>
                   Click here to sign in with your selected account and check if you can view the
                   tokengated content. <br></br>
-                  <span className="text-pink-600 font-bold">You need &gt; 1 KSM free balance.</span>
+                  <span className="text-pink-600 font-bold">You need &gt; 1 DOT free balance.</span>
                 </p>
               </div>
             )}

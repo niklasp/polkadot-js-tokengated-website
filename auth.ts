@@ -8,14 +8,13 @@ import Credentials from 'next-auth/providers/credentials';
 
 import { WsProvider } from '@polkadot/api';
 import { ApiPromise } from '@polkadot/api';
+import { getAccountBalance } from './app/api/auth/[...nextauth]/get-account-balance';
 declare module 'next-auth' {
   interface User {
     /** The user's wallet ss58 address */
     address: string;
     /** The user's wallet name */
     name?: string | null;
-    /** The user's wallet kusama address */
-    ksmAddress: string;
     /** The user's wallet free balance */
     freeBalance: string;
   }
@@ -24,7 +23,6 @@ declare module 'next-auth' {
     user: {
       address: string;
       name?: string | null;
-      ksmAddress: string;
       freeBalance: string;
       csrfToken: string;
     } & DefaultSession['user'];
@@ -35,8 +33,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     /** The user's wallet ss58 address */
     address: string;
-    /** The user's wallet kusama address */
-    ksmAddress: string;
     /** The user's wallet free balance */
     freeBalance: string;
     /** The CSRF token used to prevent CSRF attacks (aka nonce) */
@@ -86,29 +82,21 @@ export const { auth, handlers } = NextAuth({
           }
 
           // verify the account has the defined token
-
           if (credentials?.address) {
-            const ksmAddress = encodeAddress(credentials.address, 2);
+            const { free, frozen, reserved } = await getAccountBalance(credentials.address);
 
-            const wsProvider = new WsProvider(
-              process.env.RPC_ENDPOINT ?? 'wss://kusama-rpc.dwellir.com',
-            );
-            const api = await ApiPromise.create({ provider: wsProvider });
-            await api.isReady;
+            const transferable = free - frozen - reserved;
 
-            const accountInfo = await api.query.system.account(ksmAddress);
-
-            if (accountInfo.data.free.gt(new BN(1_000_000_000_000))) {
-              // if the user has a free balance > 1 KSM, we let them in
+            if (transferable > 1_000_000_000_000) {
+              // if the user has a free balance > 1 DOT, we let them in
               return {
                 id: credentials.address,
                 address: credentials.address,
                 name: credentials.name ?? '',
-                freeBalance: accountInfo.data.free.toString(),
-                ksmAddress,
+                freeBalance: transferable.toString(),
               };
             } else {
-              return Promise.reject(new Error('🚫 The gate is closed for you'));
+              return Promise.reject(new Error('🚫 You need more DOT, please top up your account'));
             }
           }
 
@@ -126,7 +114,6 @@ export const { auth, handlers } = NextAuth({
       if (user) {
         token.id = user.id;
         token.address = user.address;
-        token.ksmAddress = user.ksmAddress;
         token.freeBalance = user.freeBalance;
         token.name = user.name;
       }
@@ -135,7 +122,6 @@ export const { auth, handlers } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.address = token.address as string;
-        session.user.ksmAddress = token.ksmAddress as string;
         session.user.freeBalance = token.freeBalance as string;
         session.user.name = token.name as string;
       }

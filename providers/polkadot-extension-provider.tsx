@@ -38,14 +38,21 @@ export const PolkadotExtensionProvider = ({ children }: { children: React.ReactN
 
   useEffect(() => {
     const initializeExtensions = async () => {
+      console.log('awaiting document ready');
       await documentReadyPromise();
+      console.log('document ready');
       console.log('initializing extensions');
       const extensions = getInjectedExtensions();
+      console.log('extensions', extensions);
       setInstalledExtensions(extensions);
 
       const storedExtensionName = localStorage.getItem('selectedExtensionName') || undefined;
       const storedAccount = JSON.parse(localStorage.getItem('selectedAccount') || 'null');
       const storedUserWantsToConnect = localStorage.getItem('userWantsToConnect') || false;
+
+      console.log('storedExtensionName', storedExtensionName);
+      console.log('storedAccount', storedAccount);
+      console.log('storedUserWantsToConnect', storedUserWantsToConnect);
 
       setSelectedExtensionName(storedExtensionName);
       setSelectedAccount(storedAccount);
@@ -62,6 +69,8 @@ export const PolkadotExtensionProvider = ({ children }: { children: React.ReactN
   }, []);
 
   useEffect(() => {
+    console.log('selectedExtensionName', selectedExtensionName);
+    console.log('userWantsToConnect', userWantsToConnect);
     if (selectedExtensionName && userWantsToConnect) {
       connect();
     }

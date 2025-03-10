@@ -1,58 +1,50 @@
 'use client';
 
-import { useState } from 'react';
 import Identicon from '@polkadot/react-identicon';
 import { usePolkadotExtensionWithContext } from '@/context/polkadotExtensionContext';
 
-import 'primereact/resources/themes/md-dark-indigo/theme.css';
-import 'primereact/resources/primereact.min.css';
-import { Dropdown } from 'primereact/dropdown';
-import styles from '@/styles/Home.module.css';
-
-export const accountValueTemplate = (option: any, props: any) => {
-  if (option) {
-    return (
-      <div className={styles.accountOption}>
-        <div>
-          <Identicon value={option?.address} size={32} theme="polkadot" />
-          {option?.meta?.name}
-        </div>
-      </div>
-    );
-  }
-
-  return <span>{props.placeholder}</span>;
-};
-
-export const accountOptionTemplate = (option: any) => {
-  return (
-    <div className={styles.accountOption}>
-      <div>
-        <Identicon value={option?.address} size={32} theme="polkadot" />
-        {option?.meta?.name}
-      </div>
-    </div>
-  );
-};
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 export default function AccountSelector() {
   const { accounts, actingAccount, setActingAccountIdx } = usePolkadotExtensionWithContext();
 
+  // Filter unique accounts by address
+  const uniqueAccounts = accounts?.filter(
+    (account, index, self) => index === self.findIndex((a) => a.address === account.address),
+  );
+
   return (
-    <Dropdown
-      options={accounts ?? undefined}
-      optionLabel="address"
-      placeholder="Select Account"
-      className={styles.dropdown}
-      value={actingAccount}
-      itemTemplate={accountOptionTemplate}
-      valueTemplate={accountValueTemplate}
-      onChange={(event) => {
-        const accountIdx = accounts
-          ? accounts.findIndex((account) => account.address === event.target.value.address)
-          : 0;
-        setActingAccountIdx(accountIdx);
-      }}
-    />
+    <div className="flex flex-col items-start gap-2">
+      <Label>Select Account</Label>
+      <Select
+        onValueChange={(value) =>
+          setActingAccountIdx(accounts?.findIndex((account) => account.address === value) ?? 0)
+        }
+        value={actingAccount?.address}
+      >
+        <SelectTrigger className="w-[220px]">
+          <SelectValue placeholder="Select Account" />
+        </SelectTrigger>
+        <SelectContent className="bg-black text-white w-[220px]">
+          <SelectGroup>
+            {uniqueAccounts?.map((account) => (
+              <SelectItem key={account.address} value={account.address}>
+                <Identicon value={account.address} size={32} theme="polkadot" />
+                {account.meta?.name}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

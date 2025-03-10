@@ -23,43 +23,41 @@ export default function Home() {
           href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1340 1410.3' xml:space='preserve'%3E%3Cellipse fill='%23E6007A' cx='663' cy='147.9' rx='254.3' ry='147.9'/%3E%3Cellipse fill='%23E6007A' cx='663' cy='1262.3' rx='254.3' ry='147.9'/%3E%3Cellipse transform='rotate(-60 180.499 426.56)' fill='%23E6007A' cx='180.5' cy='426.5' rx='254.3' ry='148'/%3E%3Cellipse transform='rotate(-60 1145.575 983.768)' fill='%23E6007A' cx='1145.6' cy='983.7' rx='254.3' ry='147.9'/%3E%3Cellipse transform='rotate(-30 180.45 983.72)' fill='%23E6007A' cx='180.5' cy='983.7' rx='148' ry='254.3'/%3E%3Cellipse transform='rotate(-30 1145.522 426.601)' fill='%23E6007A' cx='1145.6' cy='426.6' rx='147.9' ry='254.3'/%3E%3C/svg%3E"
         />
       </Head>
-      <main className={styles.main}>
-        <div className={styles.center}>
+      <div className={styles.center}>
+        <Image
+          className={styles.logo}
+          src="/polkadot.svg"
+          alt="Polkadot Logo"
+          width={240}
+          height={77}
+          priority
+        />
+        <p className={inter.className}>Tokengated Tutorial Demo</p>
+      </div>
+      <LoginButton />
+
+      <div className={styles.description}>
+        <a href="https://github.com/niklasp/polkadot-js-tokengated-webssite" target="_blank">
           <Image
-            className={styles.logo}
-            src="/polkadot.svg"
-            alt="Polkadot Logo"
-            width={240}
-            height={77}
+            src="/github.svg"
+            alt="Github Repository"
+            className={styles.githubLogo}
+            width={16}
+            height={16}
             priority
           />
-          <p className={inter.className}>Tokengated Tutorial Demo</p>
-        </div>
-        <LoginButton />
-
-        <div className={styles.description}>
-          <a href="https://github.com/niklasp/polkadot-js-tokengated-webssite" target="_blank">
-            <Image
-              src="/github.svg"
-              alt="Github Repository"
-              className={styles.githubLogo}
-              width={16}
-              height={16}
-              priority
-            />
-            View the repo
-          </a>
-          <Link href="https://polkadot.study/tutorials/tokengated-polkadot-next-js/intro">
-            🎓 View the Tutorial
-          </Link>
-          <Link href="/protected" rel="noopener noreferrer">
-            🔐 Go to /protected (SSR)
-          </Link>
-          <Link href="/protected-api" rel="noopener noreferrer">
-            🔐 Go to /protected-api (Static)
-          </Link>
-        </div>
-      </main>
+          View the repo
+        </a>
+        <Link
+          href="https://polkadot.study/tutorials/tokengated-polkadot-next-js/intro"
+          className="text-center"
+        >
+          🎓 View the Tutorial (outdated)
+        </Link>
+        <Link href="/protected" rel="noopener noreferrer">
+          🔐 Go to /protected (SSR)
+        </Link>
+      </div>
     </>
   );
 }

@@ -88,7 +88,7 @@ export default function LoginButton() {
             <div className={styles.dropDownWrap}>{!session && <AccountSelect />}</div>
             {session ? (
               <>
-                <Link href="/protected-api" className={styles.card}>
+                <Link href="/protected" className={styles.card}>
                   <h2 className={inter.className}>
                     🎉 View Tokengated Route <span>-&gt;</span>
                   </h2>
@@ -114,7 +114,7 @@ export default function LoginButton() {
                 <p className={inter.className}>
                   Click here to sign in with your selected account and check if you can view the
                   tokengated content. <br></br>
-                  You need &gt; 1 KSM free balance.
+                  <span className="text-pink-600 font-bold">You need &gt; 1 KSM free balance.</span>
                 </p>
               </div>
             )}

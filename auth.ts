@@ -1,28 +1,54 @@
 import { BN, stringToU8a, hexToU8a } from '@polkadot/util';
+import { User } from 'next-auth';
 import { signatureVerify, sr25519Verify, cryptoWaitReady } from '@polkadot/util-crypto';
 import { encodeAddress, decodeAddress } from '@polkadot/keyring';
-import NextAuth, { NextAuthOptions } from 'next-auth';
+import NextAuth, { type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-
+import { JWT } from 'next-auth/jwt';
+import { WsProvider } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api';
 // Initialize crypto module
 // This needs to be done once when the server starts
 cryptoWaitReady().catch(console.error);
 
-// Define types
-interface Session {
-  address: string | undefined;
-  ksmAddress: string;
-  freeBalance: BN;
+declare module 'next-auth' {
+  interface User {
+    /** The user's wallet ss58 address */
+    address: string;
+    /** The user's wallet name */
+    name: string;
+    /** The user's wallet kusama address */
+    ksmAddress: string;
+    /** The user's wallet free balance */
+    freeBalance: string;
+  }
+
+  interface Session {
+    user: {
+      address: string;
+      name: string;
+      ksmAddress: string;
+      freeBalance: string;
+      csrfToken: string;
+    } & DefaultSession['user'];
+  }
 }
 
-interface User {
-  id: string;
-  name?: string;
-  ksmAddress: string;
-  freeBalance: BN;
+declare module 'next-auth/jwt' {
+  interface JWT {
+    /** The user's wallet ss58 address */
+    address: string;
+    /** The user's wallet kusama address */
+    ksmAddress: string;
+    /** The user's wallet free balance */
+    freeBalance: string;
+    /** The CSRF token used to prevent CSRF attacks (aka nonce) */
+    csrfToken: string;
+  }
 }
 
 export const { auth, handlers } = NextAuth({
+  debug: true,
   providers: [
     Credentials({
       credentials: {
@@ -37,67 +63,51 @@ export const { auth, handlers } = NextAuth({
         if (!credentials) return null;
 
         try {
-          console.log('Received auth data:', {
-            message: credentials.message,
-            signature: credentials.signature,
-            address: credentials.address,
-          });
-
           // First, ensure WASM crypto is ready
           await cryptoWaitReady();
 
           const message = credentials.message;
           const messageU8a = stringToU8a(message);
 
-          // Signature formatting
-          const signatureToUse = credentials.signature.startsWith('0x')
-            ? credentials.signature
-            : `0x${credentials.signature}`;
-
-          console.log('Verifying with:', {
-            messageBytes: messageU8a,
-            signatureLength: signatureToUse.length,
-          });
-
           // Standard verification
-          const verifyResult = signatureVerify(messageU8a, signatureToUse, credentials.address);
+          const verifyResult = signatureVerify(
+            messageU8a,
+            credentials.signature,
+            credentials.address,
+          );
 
-          console.log('Standard verification result:', verifyResult);
+          if (!verifyResult.isValid) {
+            return Promise.reject(new Error('🚫 Invalid Signature'));
+          }
 
-          // Also try direct sr25519 verification as fallback
-          const publicKey = decodeAddress(credentials.address);
-          const sigBytes = hexToU8a(signatureToUse);
+          // verify the account has the defined token
 
-          try {
-            const isValidSr25519 = sr25519Verify(messageU8a, sigBytes, publicKey);
-            console.log('Direct sr25519 verification:', isValidSr25519);
+          if (credentials?.address) {
+            const ksmAddress = encodeAddress(credentials.address, 2);
 
-            // Use either verification method
-            if (!verifyResult.isValid && !isValidSr25519) {
-              return Promise.reject(new Error('🚫 Invalid Signature'));
-            }
-          } catch (cryptoError) {
-            console.error('Crypto verification error:', cryptoError);
-            // Fall back to just the standard verification result
-            if (!verifyResult.isValid) {
-              return Promise.reject(new Error('🚫 Invalid Signature'));
+            const wsProvider = new WsProvider(
+              process.env.RPC_ENDPOINT ?? 'wss://kusama-rpc.dwellir.com',
+            );
+            const api = await ApiPromise.create({ provider: wsProvider });
+            await api.isReady;
+
+            const accountInfo = await api.query.system.account(ksmAddress);
+
+            if (accountInfo.data.free.gt(new BN(1_000_000_000_000))) {
+              // if the user has a free balance > 1 KSM, we let them in
+              return {
+                id: credentials.address,
+                address: credentials.address,
+                name: credentials.name,
+                freeBalance: accountInfo.data.free.toString(),
+                ksmAddress,
+              };
+            } else {
+              return Promise.reject(new Error('🚫 The gate is closed for you'));
             }
           }
 
-          console.log('✅ Signature verified successfully!');
-
-          // Get Kusama address
-          const ksmAddress = encodeAddress(credentials.address, 2);
-
-          console.log('Kusama address:', ksmAddress);
-
-          // Return simplified user object
-          return {
-            id: credentials.address,
-            name: credentials.name,
-            ksmAddress,
-            freeBalance: new BN(1), // Dummy value
-          };
+          return Promise.reject(new Error('🚫 API Error'));
         } catch (error) {
           console.error('Auth error:', error);
           return null;
@@ -109,21 +119,19 @@ export const { auth, handlers } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id;
+        token.address = user.address;
+        token.ksmAddress = user.ksmAddress;
         token.freeBalance = user.freeBalance;
       }
       return token;
     },
-
-    async session(sessionData) {
-      const { session, token } = sessionData;
-
-      session.address = token.sub;
-      if (session.address) {
-        session.ksmAddress = encodeAddress(session.address, 2);
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.address = token.address as string;
+        session.user.ksmAddress = token.ksmAddress as string;
+        session.user.freeBalance = token.freeBalance as string;
       }
-
-      session.freeBalance = token.freeBalance as BN;
-
       return session;
     },
   },
@@ -132,9 +140,3 @@ export const { auth, handlers } = NextAuth({
     signIn: '/',
   },
 });
-
-export { auth as middleware };
-
-export const config = {
-  matcher: ['/protected/:path*'],
-};

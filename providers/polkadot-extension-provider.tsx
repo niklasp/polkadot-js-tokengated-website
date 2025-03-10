@@ -8,6 +8,7 @@ import {
   type InjectedPolkadotAccount,
 } from 'polkadot-api/pjs-signer';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { documentReadyPromise } from '@/lib/document-ready';
 
 interface PolkadotExtensionContextType {
   installedExtensions: string[];
@@ -36,7 +37,8 @@ export const PolkadotExtensionProvider = ({ children }: { children: React.ReactN
   const [selectedAccount, setSelectedAccount] = useState<InjectedPolkadotAccount | null>(null);
 
   useEffect(() => {
-    const initializeExtensions = () => {
+    const initializeExtensions = async () => {
+      await documentReadyPromise();
       console.log('initializing extensions');
       const extensions = getInjectedExtensions();
       setInstalledExtensions(extensions);

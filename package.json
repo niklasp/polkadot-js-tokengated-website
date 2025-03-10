@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "npx papi"
+    "postinstall": "papi"
   },
   "dependencies": {
     "@polkadot-api/descriptors": "file:.papi/descriptors",

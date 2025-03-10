@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "papi"
+    "postinstall": "papi --unsafe-perm"
   },
   "dependencies": {
     "@polkadot-api/descriptors": "file:.papi/descriptors",
